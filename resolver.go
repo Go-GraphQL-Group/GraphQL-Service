@@ -136,7 +136,76 @@ func (r *queryResolver) Planets(ctx context.Context, first *int, after *string) 
 }
 
 func (r *queryResolver) PeopleSearch(ctx context.Context, search string, first *int, after *string) (*PeopleConnection, error) {
-	panic("not implemented")
+	from := 1
+	if after != nil {
+		b, err := base64.StdEncoding.DecodeString(*after)
+		if err != nil {
+			return &PeopleConnection{}, err
+		}
+		i, err := strconv.Atoi(strings.TrimPrefix(string(b), "cursor"))
+		if err != nil {
+			return &PeopleConnection{}, err
+		}
+		from = i + 1
+	}
+	hasPreviousPage := false
+	for i := 1; i <= from; i++ {
+		_, people := GetPeopleByID(strconv.Itoa(from))
+		if people.ID == "" {
+			break
+		}
+		if people.Name == search {
+			hasPreviousPage = true
+			break
+		}
+	}
+
+	// 获取edges
+	edges := []PeopleEdge{}
+	for {
+		_, people := GetPeopleByID(strconv.Itoa(from))
+		if people.ID == "" {
+			break
+		}
+		if people.Name == search {
+			edges = append(edges, PeopleEdge{
+				Node:   people,
+				Cursor: encodeCursor(uint(from)),
+			})
+		}
+		from++
+		if len(edges) == *first {
+			break
+		}
+	}
+
+	// 获取pageInfo
+	startId, _ := strconv.Atoi(edges[0].Node.ID)
+	endId, _ := strconv.Atoi(edges[0].Node.ID)
+	pageInfo := PageInfo{
+		StartCursor:     encodeCursor(uint(startId)),
+		EndCursor:       encodeCursor(uint(endId)),
+		HasPreviousPage: hasPreviousPage,
+	}
+	hasNextPage := false
+	if len(edges) == *first {
+		for i := endId + 1; ; i++ {
+			_, people := GetPeopleByID(strconv.Itoa(i))
+			if people.ID == "" {
+				break
+			}
+			if people.Name == search {
+				hasNextPage = true
+				break
+			}
+		}
+	}
+	pageInfo.HasNextPage = hasNextPage
+	return &PeopleConnection{
+		PageInfo:   pageInfo,
+		Edges:      edges,
+		TotalCount: len(edges),
+	}, nil
 }
 func (r *queryResolver) FilmsSearch(ctx context.Context, search string, first *int, after *string) (*FilmConnection, error) {
 	panic("not implemented")
