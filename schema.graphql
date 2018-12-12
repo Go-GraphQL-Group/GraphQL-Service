@@ -148,11 +148,6 @@ type PeopleConnection {
     edges: [PeopleEdge!]
 
     """
-    A list of nodes in the connection (without going through the `edges` field).
-    """
-    nodes: [People!]
-
-    """
     A count of the total number of items in this connection, ignoring pagination.
     """
     totalCount: Int!
@@ -251,11 +246,6 @@ type FilmConnection {
     A list of edges.
     """
     edges: [FilmEdge!]
-
-    """
-    A list of nodes in the connection (without going through the `edges` field).
-    """
-    nodes: [Film!]
 
     """
     A count of the total number of items in this connection, ignoring pagination.
@@ -378,11 +368,6 @@ type StarshipConnection {
     edges: [StarshipEdge!]
 
     """
-    A list of nodes in the connection (without going through the `edges` field).
-    """
-    nodes: [Starship!]
-
-    """
     A count of the total number of items in this connection, ignoring pagination.
     """
     totalCount: Int!
@@ -493,11 +478,6 @@ type VehicleConnection {
     edges: [VehicleEdge!]
 
     """
-    A list of nodes in the connection (without going through the `edges` field).
-    """
-    nodes: [Vehicle!]
-
-    """
     A count of the total number of items in this connection, ignoring pagination.
     """
     totalCount: Int!
@@ -603,11 +583,6 @@ type SpecieConnection {
     edges: [SpecieEdge!]
 
     """
-    A list of nodes in the connection (without going through the `edges` field).
-    """
-    nodes: [Specie!]
-
-    """
     A count of the total number of items in this connection, ignoring pagination.
     """
     totalCount: Int!
@@ -706,11 +681,6 @@ type PlanetConnection {
     A list of edges.
     """
     edges: [PlanetEdge!]
-
-    """
-    A list of nodes in the connection (without going through the `edges` field).
-    """
-    nodes: [Planet!]
 
     """
     A count of the total number of items in this connection, ignoring pagination.
