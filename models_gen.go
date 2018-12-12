@@ -28,7 +28,6 @@ type Film struct {
 type FilmConnection struct {
 	PageInfo   PageInfo   `json:"pageInfo"`
 	Edges      []FilmEdge `json:"edges"`
-	Nodes      []Film     `json:"nodes"`
 	TotalCount int        `json:"totalCount"`
 }
 
@@ -68,7 +67,6 @@ type People struct {
 type PeopleConnection struct {
 	PageInfo   PageInfo     `json:"pageInfo"`
 	Edges      []PeopleEdge `json:"edges"`
-	Nodes      []People     `json:"nodes"`
 	TotalCount int          `json:"totalCount"`
 }
 
@@ -98,7 +96,6 @@ type Planet struct {
 type PlanetConnection struct {
 	PageInfo   PageInfo     `json:"pageInfo"`
 	Edges      []PlanetEdge `json:"edges"`
-	Nodes      []Planet     `json:"nodes"`
 	TotalCount int          `json:"totalCount"`
 }
 
@@ -130,7 +127,6 @@ type Specie struct {
 type SpecieConnection struct {
 	PageInfo   PageInfo     `json:"pageInfo"`
 	Edges      []SpecieEdge `json:"edges"`
-	Nodes      []Specie     `json:"nodes"`
 	TotalCount int          `json:"totalCount"`
 }
 
@@ -164,7 +160,6 @@ type Starship struct {
 type StarshipConnection struct {
 	PageInfo   PageInfo       `json:"pageInfo"`
 	Edges      []StarshipEdge `json:"edges"`
-	Nodes      []Starship     `json:"nodes"`
 	TotalCount int            `json:"totalCount"`
 }
 
@@ -196,7 +191,6 @@ type Vehicle struct {
 type VehicleConnection struct {
 	PageInfo   PageInfo      `json:"pageInfo"`
 	Edges      []VehicleEdge `json:"edges"`
-	Nodes      []Vehicle     `json:"nodes"`
 	TotalCount int           `json:"totalCount"`
 }
 

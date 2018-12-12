@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"fmt"
 	"strconv"
 	"sync"
 
@@ -57,7 +56,6 @@ type ComplexityRoot struct {
 	FilmConnection struct {
 		PageInfo   func(childComplexity int) int
 		Edges      func(childComplexity int) int
-		Nodes      func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
@@ -93,7 +91,6 @@ type ComplexityRoot struct {
 	PeopleConnection struct {
 		PageInfo   func(childComplexity int) int
 		Edges      func(childComplexity int) int
-		Nodes      func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
@@ -120,7 +117,6 @@ type ComplexityRoot struct {
 	PlanetConnection struct {
 		PageInfo   func(childComplexity int) int
 		Edges      func(childComplexity int) int
-		Nodes      func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
@@ -163,7 +159,6 @@ type ComplexityRoot struct {
 	SpecieConnection struct {
 		PageInfo   func(childComplexity int) int
 		Edges      func(childComplexity int) int
-		Nodes      func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
@@ -194,7 +189,6 @@ type ComplexityRoot struct {
 	StarshipConnection struct {
 		PageInfo   func(childComplexity int) int
 		Edges      func(childComplexity int) int
-		Nodes      func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
@@ -223,7 +217,6 @@ type ComplexityRoot struct {
 	VehicleConnection struct {
 		PageInfo   func(childComplexity int) int
 		Edges      func(childComplexity int) int
-		Nodes      func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
@@ -698,13 +691,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.FilmConnection.Edges(childComplexity), true
 
-	case "FilmConnection.nodes":
-		if e.complexity.FilmConnection.Nodes == nil {
-			break
-		}
-
-		return e.complexity.FilmConnection.Nodes(childComplexity), true
-
 	case "FilmConnection.totalCount":
 		if e.complexity.FilmConnection.TotalCount == nil {
 			break
@@ -866,13 +852,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PeopleConnection.Edges(childComplexity), true
 
-	case "PeopleConnection.nodes":
-		if e.complexity.PeopleConnection.Nodes == nil {
-			break
-		}
-
-		return e.complexity.PeopleConnection.Nodes(childComplexity), true
-
 	case "PeopleConnection.totalCount":
 		if e.complexity.PeopleConnection.TotalCount == nil {
 			break
@@ -991,13 +970,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PlanetConnection.Edges(childComplexity), true
-
-	case "PlanetConnection.nodes":
-		if e.complexity.PlanetConnection.Nodes == nil {
-			break
-		}
-
-		return e.complexity.PlanetConnection.Nodes(childComplexity), true
 
 	case "PlanetConnection.totalCount":
 		if e.complexity.PlanetConnection.TotalCount == nil {
@@ -1269,13 +1241,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SpecieConnection.Edges(childComplexity), true
 
-	case "SpecieConnection.nodes":
-		if e.complexity.SpecieConnection.Nodes == nil {
-			break
-		}
-
-		return e.complexity.SpecieConnection.Nodes(childComplexity), true
-
 	case "SpecieConnection.totalCount":
 		if e.complexity.SpecieConnection.TotalCount == nil {
 			break
@@ -1423,13 +1388,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.StarshipConnection.Edges(childComplexity), true
 
-	case "StarshipConnection.nodes":
-		if e.complexity.StarshipConnection.Nodes == nil {
-			break
-		}
-
-		return e.complexity.StarshipConnection.Nodes(childComplexity), true
-
 	case "StarshipConnection.totalCount":
 		if e.complexity.StarshipConnection.TotalCount == nil {
 			break
@@ -1563,13 +1521,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.VehicleConnection.Edges(childComplexity), true
 
-	case "VehicleConnection.nodes":
-		if e.complexity.VehicleConnection.Nodes == nil {
-			break
-		}
-
-		return e.complexity.VehicleConnection.Nodes(childComplexity), true
-
 	case "VehicleConnection.totalCount":
 		if e.complexity.VehicleConnection.TotalCount == nil {
 			break
@@ -1597,7 +1548,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 func (e *executableSchema) Query(ctx context.Context, op *ast.OperationDefinition) *graphql.Response {
 	ec := executionContext{graphql.GetRequestContext(ctx), e}
-	fmt.Println(11111111)
+
 	buf := ec.RequestMiddleware(ctx, func(ctx context.Context) []byte {
 		data := ec._Query(ctx, op.SelectionSet)
 		var buf bytes.Buffer
@@ -2199,8 +2150,6 @@ func (ec *executionContext) _FilmConnection(ctx context.Context, sel ast.Selecti
 			}
 		case "edges":
 			out.Values[i] = ec._FilmConnection_edges(ctx, field, obj)
-		case "nodes":
-			out.Values[i] = ec._FilmConnection_nodes(ctx, field, obj)
 		case "totalCount":
 			out.Values[i] = ec._FilmConnection_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -2289,63 +2238,6 @@ func (ec *executionContext) _FilmConnection_edges(ctx context.Context, field gra
 			arr1[idx1] = func() graphql.Marshaler {
 
 				return ec._FilmEdge(ctx, field.Selections, &res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _FilmConnection_nodes(ctx context.Context, field graphql.CollectedField, obj *FilmConnection) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rctx := &graphql.ResolverContext{
-		Object: "FilmConnection",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Nodes, nil
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]Film)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				return ec._Film(ctx, field.Selections, &res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -2631,7 +2523,6 @@ var peopleImplementors = []string{"People"}
 
 // nolint: gocyclo, errcheck, gas, goconst
 func (ec *executionContext) _People(ctx context.Context, sel ast.SelectionSet, obj *People) graphql.Marshaler {
-	fmt.Println(55555555)
 	fields := graphql.CollectFields(ctx, sel, peopleImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
@@ -3214,7 +3105,6 @@ var peopleConnectionImplementors = []string{"PeopleConnection"}
 
 // nolint: gocyclo, errcheck, gas, goconst
 func (ec *executionContext) _PeopleConnection(ctx context.Context, sel ast.SelectionSet, obj *PeopleConnection) graphql.Marshaler {
-	fmt.Println(55555555)
 	fields := graphql.CollectFields(ctx, sel, peopleConnectionImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
@@ -3232,8 +3122,6 @@ func (ec *executionContext) _PeopleConnection(ctx context.Context, sel ast.Selec
 			}
 		case "edges":
 			out.Values[i] = ec._PeopleConnection_edges(ctx, field, obj)
-		case "nodes":
-			out.Values[i] = ec._PeopleConnection_nodes(ctx, field, obj)
 		case "totalCount":
 			out.Values[i] = ec._PeopleConnection_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -3322,63 +3210,6 @@ func (ec *executionContext) _PeopleConnection_edges(ctx context.Context, field g
 			arr1[idx1] = func() graphql.Marshaler {
 
 				return ec._PeopleEdge(ctx, field.Selections, &res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _PeopleConnection_nodes(ctx context.Context, field graphql.CollectedField, obj *PeopleConnection) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rctx := &graphql.ResolverContext{
-		Object: "PeopleConnection",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Nodes, nil
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]People)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				return ec._People(ctx, field.Selections, &res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -3983,8 +3814,6 @@ func (ec *executionContext) _PlanetConnection(ctx context.Context, sel ast.Selec
 			}
 		case "edges":
 			out.Values[i] = ec._PlanetConnection_edges(ctx, field, obj)
-		case "nodes":
-			out.Values[i] = ec._PlanetConnection_nodes(ctx, field, obj)
 		case "totalCount":
 			out.Values[i] = ec._PlanetConnection_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -4073,63 +3902,6 @@ func (ec *executionContext) _PlanetConnection_edges(ctx context.Context, field g
 			arr1[idx1] = func() graphql.Marshaler {
 
 				return ec._PlanetEdge(ctx, field.Selections, &res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _PlanetConnection_nodes(ctx context.Context, field graphql.CollectedField, obj *PlanetConnection) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rctx := &graphql.ResolverContext{
-		Object: "PlanetConnection",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Nodes, nil
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]Planet)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				return ec._Planet(ctx, field.Selections, &res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -4262,7 +4034,6 @@ var queryImplementors = []string{"Query"}
 
 // nolint: gocyclo, errcheck, gas, goconst
 func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
-	fmt.Println(22222222)
 	fields := graphql.CollectFields(ctx, sel, queryImplementors)
 
 	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
@@ -4385,7 +4156,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 
 // nolint: vetshadow
 func (ec *executionContext) _Query_people(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	fmt.Println(33333333)
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -4596,7 +4366,6 @@ func (ec *executionContext) _Query_planet(ctx context.Context, field graphql.Col
 
 // nolint: vetshadow
 func (ec *executionContext) _Query_peoples(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	fmt.Println(33333333)
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -5370,8 +5139,6 @@ func (ec *executionContext) _SpecieConnection(ctx context.Context, sel ast.Selec
 			}
 		case "edges":
 			out.Values[i] = ec._SpecieConnection_edges(ctx, field, obj)
-		case "nodes":
-			out.Values[i] = ec._SpecieConnection_nodes(ctx, field, obj)
 		case "totalCount":
 			out.Values[i] = ec._SpecieConnection_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -5460,63 +5227,6 @@ func (ec *executionContext) _SpecieConnection_edges(ctx context.Context, field g
 			arr1[idx1] = func() graphql.Marshaler {
 
 				return ec._SpecieEdge(ctx, field.Selections, &res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _SpecieConnection_nodes(ctx context.Context, field graphql.CollectedField, obj *SpecieConnection) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rctx := &graphql.ResolverContext{
-		Object: "SpecieConnection",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Nodes, nil
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]Specie)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				return ec._Specie(ctx, field.Selections, &res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -6241,8 +5951,6 @@ func (ec *executionContext) _StarshipConnection(ctx context.Context, sel ast.Sel
 			}
 		case "edges":
 			out.Values[i] = ec._StarshipConnection_edges(ctx, field, obj)
-		case "nodes":
-			out.Values[i] = ec._StarshipConnection_nodes(ctx, field, obj)
 		case "totalCount":
 			out.Values[i] = ec._StarshipConnection_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -6331,63 +6039,6 @@ func (ec *executionContext) _StarshipConnection_edges(ctx context.Context, field
 			arr1[idx1] = func() graphql.Marshaler {
 
 				return ec._StarshipEdge(ctx, field.Selections, &res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _StarshipConnection_nodes(ctx context.Context, field graphql.CollectedField, obj *StarshipConnection) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rctx := &graphql.ResolverContext{
-		Object: "StarshipConnection",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Nodes, nil
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]Starship)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				return ec._Starship(ctx, field.Selections, &res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -7052,8 +6703,6 @@ func (ec *executionContext) _VehicleConnection(ctx context.Context, sel ast.Sele
 			}
 		case "edges":
 			out.Values[i] = ec._VehicleConnection_edges(ctx, field, obj)
-		case "nodes":
-			out.Values[i] = ec._VehicleConnection_nodes(ctx, field, obj)
 		case "totalCount":
 			out.Values[i] = ec._VehicleConnection_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -7142,63 +6791,6 @@ func (ec *executionContext) _VehicleConnection_edges(ctx context.Context, field 
 			arr1[idx1] = func() graphql.Marshaler {
 
 				return ec._VehicleEdge(ctx, field.Selections, &res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _VehicleConnection_nodes(ctx context.Context, field graphql.CollectedField, obj *VehicleConnection) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rctx := &graphql.ResolverContext{
-		Object: "VehicleConnection",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Nodes, nil
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]Vehicle)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				return ec._Vehicle(ctx, field.Selections, &res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -8952,11 +8544,6 @@ type PeopleConnection {
     edges: [PeopleEdge!]
 
     """
-    A list of nodes in the connection (without going through the ` + "`" + `edges` + "`" + ` field).
-    """
-    nodes: [People!]
-
-    """
     A count of the total number of items in this connection, ignoring pagination.
     """
     totalCount: Int!
@@ -9055,11 +8642,6 @@ type FilmConnection {
     A list of edges.
     """
     edges: [FilmEdge!]
-
-    """
-    A list of nodes in the connection (without going through the ` + "`" + `edges` + "`" + ` field).
-    """
-    nodes: [Film!]
 
     """
     A count of the total number of items in this connection, ignoring pagination.
@@ -9182,11 +8764,6 @@ type StarshipConnection {
     edges: [StarshipEdge!]
 
     """
-    A list of nodes in the connection (without going through the ` + "`" + `edges` + "`" + ` field).
-    """
-    nodes: [Starship!]
-
-    """
     A count of the total number of items in this connection, ignoring pagination.
     """
     totalCount: Int!
@@ -9297,11 +8874,6 @@ type VehicleConnection {
     edges: [VehicleEdge!]
 
     """
-    A list of nodes in the connection (without going through the ` + "`" + `edges` + "`" + ` field).
-    """
-    nodes: [Vehicle!]
-
-    """
     A count of the total number of items in this connection, ignoring pagination.
     """
     totalCount: Int!
@@ -9407,11 +8979,6 @@ type SpecieConnection {
     edges: [SpecieEdge!]
 
     """
-    A list of nodes in the connection (without going through the ` + "`" + `edges` + "`" + ` field).
-    """
-    nodes: [Specie!]
-
-    """
     A count of the total number of items in this connection, ignoring pagination.
     """
     totalCount: Int!
@@ -9510,11 +9077,6 @@ type PlanetConnection {
     A list of edges.
     """
     edges: [PlanetEdge!]
-
-    """
-    A list of nodes in the connection (without going through the ` + "`" + `edges` + "`" + ` field).
-    """
-    nodes: [Planet!]
 
     """
     A count of the total number of items in this connection, ignoring pagination.
