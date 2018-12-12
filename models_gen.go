@@ -120,7 +120,7 @@ type Specie struct {
 	Homeworld       *Planet    `json:"homeworld"`
 	Vehicle         []*Vehicle `json:"Vehicle"`
 	Films           []*Film    `json:"films"`
-	People          []*People  `json:"people"`
+	People          []*People  `json:"People"`
 }
 
 // A connection to a list of items.

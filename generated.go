@@ -126,18 +126,24 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		People    func(childComplexity int, id string) int
-		Film      func(childComplexity int, id string) int
-		Starship  func(childComplexity int, id string) int
-		Vehicle   func(childComplexity int, id string) int
-		Specie    func(childComplexity int, id string) int
-		Planet    func(childComplexity int, id string) int
-		Peoples   func(childComplexity int, first *int, after *string) int
-		Films     func(childComplexity int, first *int, after *string) int
-		Starships func(childComplexity int, first *int, after *string) int
-		Vehicles  func(childComplexity int, first *int, after *string) int
-		Species   func(childComplexity int, first *int, after *string) int
-		Planets   func(childComplexity int, first *int, after *string) int
+		People          func(childComplexity int, id string) int
+		Film            func(childComplexity int, id string) int
+		Starship        func(childComplexity int, id string) int
+		Vehicle         func(childComplexity int, id string) int
+		Specie          func(childComplexity int, id string) int
+		Planet          func(childComplexity int, id string) int
+		Peoples         func(childComplexity int, first *int, after *string) int
+		Films           func(childComplexity int, first *int, after *string) int
+		Starships       func(childComplexity int, first *int, after *string) int
+		Vehicles        func(childComplexity int, first *int, after *string) int
+		Species         func(childComplexity int, first *int, after *string) int
+		Planets         func(childComplexity int, first *int, after *string) int
+		PeopleSearch    func(childComplexity int, search string, first *int, after *string) int
+		FilmsSearch     func(childComplexity int, search string, first *int, after *string) int
+		StarshipsSearch func(childComplexity int, search string, first *int, after *string) int
+		VehiclesSearch  func(childComplexity int, search string, first *int, after *string) int
+		SpeciesSearch   func(childComplexity int, search string, first *int, after *string) int
+		PlanetsSearch   func(childComplexity int, search string, first *int, after *string) int
 	}
 
 	Specie struct {
@@ -154,6 +160,7 @@ type ComplexityRoot struct {
 		Homeworld       func(childComplexity int) int
 		Vehicle         func(childComplexity int) int
 		Films           func(childComplexity int) int
+		People          func(childComplexity int) int
 	}
 
 	SpecieConnection struct {
@@ -239,6 +246,12 @@ type QueryResolver interface {
 	Vehicles(ctx context.Context, first *int, after *string) (VehicleConnection, error)
 	Species(ctx context.Context, first *int, after *string) (SpecieConnection, error)
 	Planets(ctx context.Context, first *int, after *string) (PlanetConnection, error)
+	PeopleSearch(ctx context.Context, search string, first *int, after *string) (*PeopleConnection, error)
+	FilmsSearch(ctx context.Context, search string, first *int, after *string) (*FilmConnection, error)
+	StarshipsSearch(ctx context.Context, search string, first *int, after *string) (*StarshipConnection, error)
+	VehiclesSearch(ctx context.Context, search string, first *int, after *string) (*VehicleConnection, error)
+	SpeciesSearch(ctx context.Context, search string, first *int, after *string) (*SpecieConnection, error)
+	PlanetsSearch(ctx context.Context, search string, first *int, after *string) (*PlanetConnection, error)
 }
 
 func field_Query_people_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
@@ -531,6 +544,264 @@ func field_Query_planets_args(rawArgs map[string]interface{}) (map[string]interf
 		}
 	}
 	args["after"] = arg1
+	return args, nil
+
+}
+
+func field_Query_peopleSearch_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["search"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalString(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["search"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["after"]; ok {
+		var err error
+		var ptr1 string
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalID(tmp)
+			arg2 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg2
+	return args, nil
+
+}
+
+func field_Query_filmsSearch_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["search"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalString(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["search"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["after"]; ok {
+		var err error
+		var ptr1 string
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalID(tmp)
+			arg2 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg2
+	return args, nil
+
+}
+
+func field_Query_starshipsSearch_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["search"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalString(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["search"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["after"]; ok {
+		var err error
+		var ptr1 string
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalID(tmp)
+			arg2 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg2
+	return args, nil
+
+}
+
+func field_Query_vehiclesSearch_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["search"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalString(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["search"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["after"]; ok {
+		var err error
+		var ptr1 string
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalID(tmp)
+			arg2 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg2
+	return args, nil
+
+}
+
+func field_Query_speciesSearch_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["search"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalString(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["search"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["after"]; ok {
+		var err error
+		var ptr1 string
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalID(tmp)
+			arg2 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg2
+	return args, nil
+
+}
+
+func field_Query_planetsSearch_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["search"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalString(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["search"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["after"]; ok {
+		var err error
+		var ptr1 string
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalID(tmp)
+			arg2 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg2
 	return args, nil
 
 }
@@ -1136,6 +1407,78 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Planets(childComplexity, args["first"].(*int), args["after"].(*string)), true
 
+	case "Query.peopleSearch":
+		if e.complexity.Query.PeopleSearch == nil {
+			break
+		}
+
+		args, err := field_Query_peopleSearch_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PeopleSearch(childComplexity, args["search"].(string), args["first"].(*int), args["after"].(*string)), true
+
+	case "Query.filmsSearch":
+		if e.complexity.Query.FilmsSearch == nil {
+			break
+		}
+
+		args, err := field_Query_filmsSearch_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FilmsSearch(childComplexity, args["search"].(string), args["first"].(*int), args["after"].(*string)), true
+
+	case "Query.starshipsSearch":
+		if e.complexity.Query.StarshipsSearch == nil {
+			break
+		}
+
+		args, err := field_Query_starshipsSearch_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.StarshipsSearch(childComplexity, args["search"].(string), args["first"].(*int), args["after"].(*string)), true
+
+	case "Query.vehiclesSearch":
+		if e.complexity.Query.VehiclesSearch == nil {
+			break
+		}
+
+		args, err := field_Query_vehiclesSearch_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.VehiclesSearch(childComplexity, args["search"].(string), args["first"].(*int), args["after"].(*string)), true
+
+	case "Query.speciesSearch":
+		if e.complexity.Query.SpeciesSearch == nil {
+			break
+		}
+
+		args, err := field_Query_speciesSearch_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.SpeciesSearch(childComplexity, args["search"].(string), args["first"].(*int), args["after"].(*string)), true
+
+	case "Query.planetsSearch":
+		if e.complexity.Query.PlanetsSearch == nil {
+			break
+		}
+
+		args, err := field_Query_planetsSearch_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PlanetsSearch(childComplexity, args["search"].(string), args["first"].(*int), args["after"].(*string)), true
+
 	case "Specie.id":
 		if e.complexity.Specie.Id == nil {
 			break
@@ -1226,6 +1569,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Specie.Films(childComplexity), true
+
+	case "Specie.People":
+		if e.complexity.Specie.People == nil {
+			break
+		}
+
+		return e.complexity.Specie.People(childComplexity), true
 
 	case "SpecieConnection.pageInfo":
 		if e.complexity.SpecieConnection.PageInfo == nil {
@@ -2025,7 +2375,7 @@ func (ec *executionContext) _Film_characters(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*Vehicle)
+	res := resTmp.([]*People)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
@@ -2054,7 +2404,7 @@ func (ec *executionContext) _Film_characters(ctx context.Context, field graphql.
 					return graphql.Null
 				}
 
-				return ec._Vehicle(ctx, field.Selections, res[idx1])
+				return ec._People(ctx, field.Selections, res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -3689,7 +4039,7 @@ func (ec *executionContext) _Planet_residents(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*Vehicle)
+	res := resTmp.([]*People)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
@@ -3718,7 +4068,7 @@ func (ec *executionContext) _Planet_residents(ctx context.Context, field graphql
 					return graphql.Null
 				}
 
-				return ec._Vehicle(ctx, field.Selections, res[idx1])
+				return ec._People(ctx, field.Selections, res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -4137,6 +4487,42 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				if out.Values[i] == graphql.Null {
 					invalid = true
 				}
+				wg.Done()
+			}(i, field)
+		case "peopleSearch":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_peopleSearch(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "filmsSearch":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_filmsSearch(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "starshipsSearch":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_starshipsSearch(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "vehiclesSearch":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_vehiclesSearch(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "speciesSearch":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_speciesSearch(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "planetsSearch":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_planetsSearch(ctx, field)
 				wg.Done()
 			}(i, field)
 		case "__type":
@@ -4569,6 +4955,216 @@ func (ec *executionContext) _Query_planets(ctx context.Context, field graphql.Co
 }
 
 // nolint: vetshadow
+func (ec *executionContext) _Query_peopleSearch(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_peopleSearch_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().PeopleSearch(rctx, args["search"].(string), args["first"].(*int), args["after"].(*string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*PeopleConnection)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._PeopleConnection(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_filmsSearch(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_filmsSearch_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().FilmsSearch(rctx, args["search"].(string), args["first"].(*int), args["after"].(*string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*FilmConnection)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._FilmConnection(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_starshipsSearch(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_starshipsSearch_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().StarshipsSearch(rctx, args["search"].(string), args["first"].(*int), args["after"].(*string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*StarshipConnection)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._StarshipConnection(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_vehiclesSearch(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_vehiclesSearch_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().VehiclesSearch(rctx, args["search"].(string), args["first"].(*int), args["after"].(*string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*VehicleConnection)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._VehicleConnection(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_speciesSearch(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_speciesSearch_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SpeciesSearch(rctx, args["search"].(string), args["first"].(*int), args["after"].(*string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*SpecieConnection)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._SpecieConnection(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_planetsSearch(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_planetsSearch_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().PlanetsSearch(rctx, args["search"].(string), args["first"].(*int), args["after"].(*string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*PlanetConnection)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._PlanetConnection(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
@@ -4678,6 +5274,8 @@ func (ec *executionContext) _Specie(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec._Specie_Vehicle(ctx, field, obj)
 		case "films":
 			out.Values[i] = ec._Specie_films(ctx, field, obj)
+		case "People":
+			out.Values[i] = ec._Specie_People(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5105,6 +5703,67 @@ func (ec *executionContext) _Specie_films(ctx context.Context, field graphql.Col
 				}
 
 				return ec._Film(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Specie_People(ctx context.Context, field graphql.CollectedField, obj *Specie) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Specie",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.People, nil
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*People)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._People(ctx, field.Selections, res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -5887,7 +6546,7 @@ func (ec *executionContext) _Starship_pilots(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*Vehicle)
+	res := resTmp.([]*People)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
@@ -5916,7 +6575,7 @@ func (ec *executionContext) _Starship_pilots(ctx context.Context, field graphql.
 					return graphql.Null
 				}
 
-				return ec._Vehicle(ctx, field.Selections, res[idx1])
+				return ec._People(ctx, field.Selections, res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -6639,7 +7298,7 @@ func (ec *executionContext) _Vehicle_pilots(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*Vehicle)
+	res := resTmp.([]*People)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
@@ -6668,7 +7327,7 @@ func (ec *executionContext) _Vehicle_pilots(ctx context.Context, field graphql.C
 					return graphql.Null
 				}
 
-				return ec._Vehicle(ctx, field.Selections, res[idx1])
+				return ec._People(ctx, field.Selections, res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -8619,9 +9278,9 @@ type Film {
     vehicles: [Vehicle]
     
     """
-    An array of Vehicle resources that are in this film.
+    An array of People resources that are in this film.
     """
-    characters: [Vehicle]
+    characters: [People]
     
     """
     An array of planet resources that are in this film.
@@ -8744,9 +9403,9 @@ type Starship {
     films: [Film]
     
     """
-    An array of Vehicle resources that this starship has been piloted by.
+    An array of People resources that this starship has been piloted by.
     """
-    pilots: [Vehicle]
+    pilots: [People]
 }
 
 """
@@ -8854,9 +9513,9 @@ type Vehicle {
     films: [Film]
     
     """
-    An array of Vehicle resources that this vehicle has been piloted by.
+    An array of People resources that this vehicle has been piloted by.
     """
-    pilots: [Vehicle]
+    pilots: [People]
 }
 
 """
@@ -8962,6 +9621,11 @@ type Specie {
     An array of film resources that this species has appeared in.
     """
     films: [Film]
+        
+    """
+    An array of People resources that this species has appeared in.
+    """
+    People: [People]
 }
 
 """
@@ -9054,9 +9718,9 @@ type Planet {
     surface_water: String
     
     """
-    An array of Vehicle resources that live on this planet.
+    An array of People resources that live on this planet.
     """
-    residents: [Vehicle]
+    residents: [People]
     
     """
     An array of film resources that this planet has appeared in.
@@ -9253,125 +9917,125 @@ type Query {
         after: ID
     ): PlanetConnection!
 
-    # """
-    # Search for people entities matching the given query.
-    # """
-    # peoples (
-    #     """
-    #     The search field for name, in Lucene search syntax.
-    #     """
-    #     search: String!
+    """
+    Search for people entities matching the given query.
+    """
+    peopleSearch (
+        """
+        The search field for name, in Lucene search syntax.
+        """
+        search: String!
         
-    #     """
-    #     The number of entities in the connection.
-    #     """
-    #     first: Int
+        """
+        The number of entities in the connection.
+        """
+        first: Int
 
-    #     """
-    #     The connection follows by.
-    #     """
-    #     after: ID
-    # ): PeopleConnection
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): PeopleConnection
 
-    # """
-    # Search for film entities matching the given query.
-    # """
-    # films (
-    #     """
-    #     The search field for title, in Lucene search syntax.
-    #     """
-    #     search: String!
+    """
+    Search for film entities matching the given query.
+    """
+    filmsSearch (
+        """
+        The search field for title, in Lucene search syntax.
+        """
+        search: String!
         
-    #     """
-    #     The number of entities in the connection.
-    #     """
-    #     first: Int
+        """
+        The number of entities in the connection.
+        """
+        first: Int
 
-    #     """
-    #     The connection follows by.
-    #     """
-    #     after: ID
-    # ): FilmConnection
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): FilmConnection
 
-    # """
-    # Search for starship entities matching the given query.
-    # """
-    # starships (
-    #     """
-    #     The search field for name or model, in Lucene search syntax.
-    #     """
-    #     search: String!
+    """
+    Search for starship entities matching the given query.
+    """
+    starshipsSearch (
+        """
+        The search field for name or model, in Lucene search syntax.
+        """
+        search: String!
         
-    #     """
-    #     The number of entities in the connection.
-    #     """
-    #     first: Int
+        """
+        The number of entities in the connection.
+        """
+        first: Int
 
-    #     """
-    #     The connection follows by.
-    #     """
-    #     after: ID
-    # ): StarshipConnection
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): StarshipConnection
 
-    # """
-    # Search for vehicle entities matching the given query.
-    # """
-    # vehicles (
-    #     """
-    #     The search field for name or model, in Lucene search syntax.
-    #     """
-    #     search: String!
+    """
+    Search for vehicle entities matching the given query.
+    """
+    vehiclesSearch (
+        """
+        The search field for name or model, in Lucene search syntax.
+        """
+        search: String!
         
-    #     """
-    #     The number of entities in the connection.
-    #     """
-    #     first: Int
+        """
+        The number of entities in the connection.
+        """
+        first: Int
 
-    #     """
-    #     The connection follows by.
-    #     """
-    #     after: ID
-    # ): VehicleConnection
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): VehicleConnection
 
-    # """
-    # Search for specie entities matching the given query.
-    # """
-    # species (
-    #     """
-    #     The search field for name, in Lucene search syntax.
-    #     """
-    #     search: String!
+    """
+    Search for specie entities matching the given query.
+    """
+    speciesSearch (
+        """
+        The search field for name, in Lucene search syntax.
+        """
+        search: String!
         
-    #     """
-    #     The number of entities in the connection.
-    #     """
-    #     first: Int
+        """
+        The number of entities in the connection.
+        """
+        first: Int
 
-    #     """
-    #     The connection follows by.
-    #     """
-    #     after: ID
-    # ): SpecieConnection
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): SpecieConnection
 
-    # """
-    # Search for planet entities matching the given query.
-    # """
-    # planets (
-    #     """
-    #     The search field for name, in Lucene search syntax.
-    #     """
-    #     search: String!
+    """
+    Search for planet entities matching the given query.
+    """
+    planetsSearch (
+        """
+        The search field for name, in Lucene search syntax.
+        """
+        search: String!
         
-    #     """
-    #     The number of entities in the connection.
-    #     """
-    #     first: Int
+        """
+        The number of entities in the connection.
+        """
+        first: Int
 
-    #     """
-    #     The connection follows by.
-    #     """
-    #     after: ID
-    # ): PlanetConnection
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): PlanetConnection
 }
 `},
 )

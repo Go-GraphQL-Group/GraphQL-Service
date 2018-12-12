@@ -223,9 +223,9 @@ type Film {
     vehicles: [Vehicle]
     
     """
-    An array of Vehicle resources that are in this film.
+    An array of People resources that are in this film.
     """
-    characters: [Vehicle]
+    characters: [People]
     
     """
     An array of planet resources that are in this film.
@@ -348,9 +348,9 @@ type Starship {
     films: [Film]
     
     """
-    An array of Vehicle resources that this starship has been piloted by.
+    An array of People resources that this starship has been piloted by.
     """
-    pilots: [Vehicle]
+    pilots: [People]
 }
 
 """
@@ -458,9 +458,9 @@ type Vehicle {
     films: [Film]
     
     """
-    An array of Vehicle resources that this vehicle has been piloted by.
+    An array of People resources that this vehicle has been piloted by.
     """
-    pilots: [Vehicle]
+    pilots: [People]
 }
 
 """
@@ -566,6 +566,11 @@ type Specie {
     An array of film resources that this species has appeared in.
     """
     films: [Film]
+        
+    """
+    An array of People resources that this species has appeared in.
+    """
+    People: [People]
 }
 
 """
@@ -658,9 +663,9 @@ type Planet {
     surface_water: String
     
     """
-    An array of Vehicle resources that live on this planet.
+    An array of People resources that live on this planet.
     """
-    residents: [Vehicle]
+    residents: [People]
     
     """
     An array of film resources that this planet has appeared in.
@@ -857,123 +862,123 @@ type Query {
         after: ID
     ): PlanetConnection!
 
-    # """
-    # Search for people entities matching the given query.
-    # """
-    # peoples (
-    #     """
-    #     The search field for name, in Lucene search syntax.
-    #     """
-    #     search: String!
+    """
+    Search for people entities matching the given query.
+    """
+    peopleSearch (
+        """
+        The search field for name, in Lucene search syntax.
+        """
+        search: String!
         
-    #     """
-    #     The number of entities in the connection.
-    #     """
-    #     first: Int
+        """
+        The number of entities in the connection.
+        """
+        first: Int
 
-    #     """
-    #     The connection follows by.
-    #     """
-    #     after: ID
-    # ): PeopleConnection
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): PeopleConnection
 
-    # """
-    # Search for film entities matching the given query.
-    # """
-    # films (
-    #     """
-    #     The search field for title, in Lucene search syntax.
-    #     """
-    #     search: String!
+    """
+    Search for film entities matching the given query.
+    """
+    filmsSearch (
+        """
+        The search field for title, in Lucene search syntax.
+        """
+        search: String!
         
-    #     """
-    #     The number of entities in the connection.
-    #     """
-    #     first: Int
+        """
+        The number of entities in the connection.
+        """
+        first: Int
 
-    #     """
-    #     The connection follows by.
-    #     """
-    #     after: ID
-    # ): FilmConnection
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): FilmConnection
 
-    # """
-    # Search for starship entities matching the given query.
-    # """
-    # starships (
-    #     """
-    #     The search field for name or model, in Lucene search syntax.
-    #     """
-    #     search: String!
+    """
+    Search for starship entities matching the given query.
+    """
+    starshipsSearch (
+        """
+        The search field for name or model, in Lucene search syntax.
+        """
+        search: String!
         
-    #     """
-    #     The number of entities in the connection.
-    #     """
-    #     first: Int
+        """
+        The number of entities in the connection.
+        """
+        first: Int
 
-    #     """
-    #     The connection follows by.
-    #     """
-    #     after: ID
-    # ): StarshipConnection
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): StarshipConnection
 
-    # """
-    # Search for vehicle entities matching the given query.
-    # """
-    # vehicles (
-    #     """
-    #     The search field for name or model, in Lucene search syntax.
-    #     """
-    #     search: String!
+    """
+    Search for vehicle entities matching the given query.
+    """
+    vehiclesSearch (
+        """
+        The search field for name or model, in Lucene search syntax.
+        """
+        search: String!
         
-    #     """
-    #     The number of entities in the connection.
-    #     """
-    #     first: Int
+        """
+        The number of entities in the connection.
+        """
+        first: Int
 
-    #     """
-    #     The connection follows by.
-    #     """
-    #     after: ID
-    # ): VehicleConnection
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): VehicleConnection
 
-    # """
-    # Search for specie entities matching the given query.
-    # """
-    # species (
-    #     """
-    #     The search field for name, in Lucene search syntax.
-    #     """
-    #     search: String!
+    """
+    Search for specie entities matching the given query.
+    """
+    speciesSearch (
+        """
+        The search field for name, in Lucene search syntax.
+        """
+        search: String!
         
-    #     """
-    #     The number of entities in the connection.
-    #     """
-    #     first: Int
+        """
+        The number of entities in the connection.
+        """
+        first: Int
 
-    #     """
-    #     The connection follows by.
-    #     """
-    #     after: ID
-    # ): SpecieConnection
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): SpecieConnection
 
-    # """
-    # Search for planet entities matching the given query.
-    # """
-    # planets (
-    #     """
-    #     The search field for name, in Lucene search syntax.
-    #     """
-    #     search: String!
+    """
+    Search for planet entities matching the given query.
+    """
+    planetsSearch (
+        """
+        The search field for name, in Lucene search syntax.
+        """
+        search: String!
         
-    #     """
-    #     The number of entities in the connection.
-    #     """
-    #     first: Int
+        """
+        The number of entities in the connection.
+        """
+        first: Int
 
-    #     """
-    #     The connection follows by.
-    #     """
-    #     after: ID
-    # ): PlanetConnection
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): PlanetConnection
 }
