@@ -20,7 +20,7 @@ type Film struct {
 	Species      []*Specie   `json:"species"`
 	Starships    []*Starship `json:"starships"`
 	Vehicles     []*Vehicle  `json:"vehicles"`
-	Characters   []*Vehicle  `json:"characters"`
+	Characters   []*People   `json:"characters"`
 	Planets      []*Planet   `json:"planets"`
 }
 
@@ -80,18 +80,18 @@ type PeopleEdge struct {
 
 // A Planet resource is a large mass, planet or planetoid in the Star Wars Universe, at the time of 0 ABY.
 type Planet struct {
-	ID             string     `json:"id"`
-	Name           string     `json:"name"`
-	Diameter       *string    `json:"diameter"`
-	RotationPeriod *string    `json:"rotation_period"`
-	OrbitalPeriod  *string    `json:"orbital_period"`
-	Gravity        *string    `json:"gravity"`
-	Population     *string    `json:"population"`
-	Climate        *string    `json:"climate"`
-	Terrain        *string    `json:"terrain"`
-	SurfaceWater   *string    `json:"surface_water"`
-	Residents      []*Vehicle `json:"residents"`
-	Films          []*Film    `json:"films"`
+	ID             string    `json:"id"`
+	Name           string    `json:"name"`
+	Diameter       *string   `json:"diameter"`
+	RotationPeriod *string   `json:"rotation_period"`
+	OrbitalPeriod  *string   `json:"orbital_period"`
+	Gravity        *string   `json:"gravity"`
+	Population     *string   `json:"population"`
+	Climate        *string   `json:"climate"`
+	Terrain        *string   `json:"terrain"`
+	SurfaceWater   *string   `json:"surface_water"`
+	Residents      []*People `json:"residents"`
+	Films          []*Film   `json:"films"`
 }
 
 // A connection to a list of items.
@@ -123,6 +123,7 @@ type Specie struct {
 	Homeworld       *Planet    `json:"homeworld"`
 	Vehicle         []*Vehicle `json:"Vehicle"`
 	Films           []*Film    `json:"films"`
+	People          []*People  `json:"people"`
 }
 
 // A connection to a list of items.
@@ -141,22 +142,22 @@ type SpecieEdge struct {
 
 // A Starship resource is a single transport craft that has hyperdrive capability.
 type Starship struct {
-	ID                   string     `json:"id"`
-	Name                 string     `json:"name"`
-	Model                *string    `json:"model"`
-	StarshipClass        *string    `json:"starship_class"`
-	Manufacturer         *string    `json:"manufacturer"`
-	CostInCredits        *string    `json:"cost_in_credits"`
-	Length               *string    `json:"length"`
-	Crew                 *string    `json:"crew"`
-	Passengers           *string    `json:"passengers"`
-	MaxAtmospheringSpeed *string    `json:"max_atmosphering_speed"`
-	HyperdriveRating     *string    `json:"hyperdrive_rating"`
-	MGLT                 *string    `json:"MGLT"`
-	CargoCapacity        *string    `json:"cargo_capacity"`
-	Consumables          *string    `json:"consumables"`
-	Films                []*Film    `json:"films"`
-	Pilots               []*Vehicle `json:"pilots"`
+	ID                   string    `json:"id"`
+	Name                 string    `json:"name"`
+	Model                *string   `json:"model"`
+	StarshipClass        *string   `json:"starship_class"`
+	Manufacturer         *string   `json:"manufacturer"`
+	CostInCredits        *string   `json:"cost_in_credits"`
+	Length               *string   `json:"length"`
+	Crew                 *string   `json:"crew"`
+	Passengers           *string   `json:"passengers"`
+	MaxAtmospheringSpeed *string   `json:"max_atmosphering_speed"`
+	HyperdriveRating     *string   `json:"hyperdrive_rating"`
+	MGLT                 *string   `json:"MGLT"`
+	CargoCapacity        *string   `json:"cargo_capacity"`
+	Consumables          *string   `json:"consumables"`
+	Films                []*Film   `json:"films"`
+	Pilots               []*People `json:"pilots"`
 }
 
 // A connection to a list of items.
@@ -188,7 +189,7 @@ type Vehicle struct {
 	CargoCapacity        *string       `json:"cargo_capacity"`
 	Consumables          *string       `json:"consumables"`
 	Films                []*Film       `json:"films"`
-	Pilots               []*Vehicle    `json:"pilots"`
+	Pilots               []*People     `json:"pilots"`
 }
 
 // A connection to a list of items.
