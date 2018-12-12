@@ -3214,6 +3214,7 @@ var peopleConnectionImplementors = []string{"PeopleConnection"}
 
 // nolint: gocyclo, errcheck, gas, goconst
 func (ec *executionContext) _PeopleConnection(ctx context.Context, sel ast.SelectionSet, obj *PeopleConnection) graphql.Marshaler {
+	fmt.Println(55555555)
 	fields := graphql.CollectFields(ctx, sel, peopleConnectionImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
@@ -4595,6 +4596,7 @@ func (ec *executionContext) _Query_planet(ctx context.Context, field graphql.Col
 
 // nolint: vetshadow
 func (ec *executionContext) _Query_peoples(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	fmt.Println(33333333)
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rawArgs := field.ArgumentMap(ec.Variables)
