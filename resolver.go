@@ -1,12 +1,15 @@
 package GraphQL_Service
 
 import (
+	// "encoding/json"
 	"context"
 	"encoding/base64"
 	"fmt"
 	"log"
 	"strconv"
 	"strings"
+
+	// "github.com/Go-GraphQL-Group/GraphQL-Service/server/service"
 )
 
 type Resolver struct{}
@@ -58,6 +61,7 @@ func encodeCursor(i uint) string {
 }
 
 func (r *queryResolver) Peoples(ctx context.Context, first *int, after *string) (PeopleConnection, error) {
+	
 	from := 1
 	if after != nil {
 		b, err := base64.StdEncoding.DecodeString(*after)
@@ -136,6 +140,12 @@ func (r *queryResolver) Planets(ctx context.Context, first *int, after *string) 
 }
 
 func (r *queryResolver) PeopleSearch(ctx context.Context, search string, first *int, after *string) (*PeopleConnection, error) {
+	fmt.Println(ctx)
+	// token := &service.Token{}
+	// tokenJson, _ := ctx.Value(service.Issuer).(string)
+	// json.Unmarshal([]byte(tokenJson), token)
+	// service.ParseToken(token.SW_TOKEN, []byte(service.SecretKey))
+
 	from := 1
 	if after != nil {
 		b, err := base64.StdEncoding.DecodeString(*after)
