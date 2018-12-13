@@ -6,6 +6,9 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
+var tokens []Token
+
+const TokenName = "SW-TOKEN"
 const Issuer = "Go-GraphQL-Group"
 const SecretKey = "StarWars"
 
