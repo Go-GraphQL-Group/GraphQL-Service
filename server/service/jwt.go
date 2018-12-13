@@ -1,18 +1,19 @@
 package service
 
-import(
+import (
 	"time"
+
 	"github.com/dgrijalva/jwt-go"
 )
 
 const Issuer = "Go-GraphQL-Group"
 const SecretKey = "StarWars"
 
-type Token struct{
+type Token struct {
 	SW_TOKEN string `json:"SW-TOKEN"`
 }
 
-type jwtCustomClaims struct{
+type jwtCustomClaims struct {
 	jwt.StandardClaims
 
 	Admin bool `json:"admin"`
@@ -22,7 +23,7 @@ func CreateToken(secretKey []byte, issuer string, isAdmin bool) (token Token, er
 	claims := &jwtCustomClaims{
 		jwt.StandardClaims{
 			ExpiresAt: int64(time.Now().Add(time.Hour * 1).Unix()),
-			Issuer: issuer,
+			Issuer:    issuer,
 		},
 		isAdmin,
 	}
@@ -31,7 +32,7 @@ func CreateToken(secretKey []byte, issuer string, isAdmin bool) (token Token, er
 	token = Token{
 		tokenStr,
 	}
-	return 
+	return
 }
 
 func ParseToken(tokenStr string, secretKey []byte) (claims jwt.Claims, err error) {

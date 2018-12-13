@@ -113,11 +113,13 @@ func convertVehicle(vehicle1 *model1.Vehicle) *Vehicle {
 	return vehicle2
 }
 
-func GetPeopleByID(ID string) (error, *People) {
-	db, err := bolt.Open("./data/data.db", 0600, nil)
-	CheckErr(err)
-	defer db.Close()
-
+func GetPeopleByID(ID string, db *bolt.DB) (error, *People) {
+	var err error
+	if db == nil {
+		db, err = bolt.Open("./data/data.db", 0600, nil)
+		CheckErr(err)
+		defer db.Close()
+	}
 	people1 := &People{}
 
 	people := &model1.People{}
@@ -195,10 +197,13 @@ func GetPeopleByID(ID string) (error, *People) {
 	return err, people1
 }
 
-func GetFilmByID(ID string) (error, *Film) {
-	db, err := bolt.Open("./data/data.db", 0600, nil)
-	CheckErr(err)
-	defer db.Close()
+func GetFilmByID(ID string, db *bolt.DB) (error, *Film) {
+	var err error
+	if db == nil {
+		db, err = bolt.Open("./data/data.db", 0600, nil)
+		CheckErr(err)
+		defer db.Close()
+	}
 
 	film1 := &Film{}
 	film := &model1.Film{}
@@ -279,10 +284,13 @@ func GetFilmByID(ID string) (error, *Film) {
 	return err, film1
 }
 
-func GetPlanetByID(ID string) (error, *Planet) {
-	db, err := bolt.Open("./data/data.db", 0600, nil)
-	CheckErr(err)
-	defer db.Close()
+func GetPlanetByID(ID string, db *bolt.DB) (error, *Planet) {
+	var err error
+	if db == nil {
+		db, err = bolt.Open("./data/data.db", 0600, nil)
+		CheckErr(err)
+		defer db.Close()
+	}
 
 	planet1 := &Planet{}
 	planet := &model1.Planet{}
@@ -327,10 +335,13 @@ func GetPlanetByID(ID string) (error, *Planet) {
 	return err, planet1
 }
 
-func GetSpeciesByID(ID string) (error, *Specie) {
-	db, err := bolt.Open("./data/data.db", 0600, nil)
-	CheckErr(err)
-	defer db.Close()
+func GetSpeciesByID(ID string, db *bolt.DB) (error, *Specie) {
+	var err error
+	if db == nil {
+		db, err = bolt.Open("./data/data.db", 0600, nil)
+		CheckErr(err)
+		defer db.Close()
+	}
 
 	specie1 := &Specie{}
 	specie := &model1.Species{}
@@ -389,10 +400,13 @@ func GetSpeciesByID(ID string) (error, *Specie) {
 	return err, specie1
 }
 
-func GetStarshipByID(ID string) (error, *Starship) {
-	db, err := bolt.Open("./data/data.db", 0600, nil)
-	CheckErr(err)
-	defer db.Close()
+func GetStarshipByID(ID string, db *bolt.DB) (error, *Starship) {
+	var err error
+	if db == nil {
+		db, err = bolt.Open("./data/data.db", 0600, nil)
+		CheckErr(err)
+		defer db.Close()
+	}
 
 	starship1 := &Starship{}
 	starship := &model1.Starship{}
@@ -440,10 +454,13 @@ func GetStarshipByID(ID string) (error, *Starship) {
 	return err, starship1
 }
 
-func GetVehicleByID(ID string) (error, *Vehicle) {
-	db, err := bolt.Open("./data/data.db", 0600, nil)
-	CheckErr(err)
-	defer db.Close()
+func GetVehicleByID(ID string, db *bolt.DB) (error, *Vehicle) {
+	var err error
+	if db == nil {
+		db, err = bolt.Open("./data/data.db", 0600, nil)
+		CheckErr(err)
+		defer db.Close()
+	}
 
 	vehicle1 := &Vehicle{}
 	vehicle := &model1.Vehicle{}

@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/boltdb/bolt"
 	// "github.com/Go-GraphQL-Group/GraphQL-Service/server/service"
 )
 
@@ -26,43 +27,43 @@ func checkErr(err error) {
 	}
 }
 func (r *queryResolver) People(ctx context.Context, id string) (*People, error) {
-	err, people := GetPeopleByID(id)
+	err, people := GetPeopleByID(id, nil)
 	checkErr(err)
 	return people, err
 }
 func (r *queryResolver) Film(ctx context.Context, id string) (*Film, error) {
-	err, film := GetFilmByID(id)
+	err, film := GetFilmByID(id, nil)
 	checkErr(err)
 	return film, err
 }
 func (r *queryResolver) Starship(ctx context.Context, id string) (*Starship, error) {
-	err, starship := GetStarshipByID(id)
+	err, starship := GetStarshipByID(id, nil)
 	checkErr(err)
 	return starship, err
 }
 func (r *queryResolver) Vehicle(ctx context.Context, id string) (*Vehicle, error) {
-	err, vehicle := GetVehicleByID(id)
+	err, vehicle := GetVehicleByID(id, nil)
 	checkErr(err)
 	return vehicle, err
 }
 func (r *queryResolver) Specie(ctx context.Context, id string) (*Specie, error) {
-	err, specie := GetSpeciesByID(id)
+	err, specie := GetSpeciesByID(id, nil)
 	checkErr(err)
 	return specie, err
 }
 func (r *queryResolver) Planet(ctx context.Context, id string) (*Planet, error) {
-	err, planet := GetPlanetByID(id)
+	err, planet := GetPlanetByID(id, nil)
 	checkErr(err)
 	return planet, err
 }
 
-func encodeCursor(i uint) string {
+func encodeCursor(k string) string {
+	i, _ := strconv.Atoi(k)
 	return base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("cursor%d", i)))
 }
 
 func (r *queryResolver) Peoples(ctx context.Context, first *int, after *string) (PeopleConnection, error) {
-	
-	from := 1
+	from := -1
 	if after != nil {
 		b, err := base64.StdEncoding.DecodeString(*after)
 		if err != nil {
@@ -72,53 +73,83 @@ func (r *queryResolver) Peoples(ctx context.Context, first *int, after *string) 
 		if err != nil {
 			return PeopleConnection{}, err
 		}
-		from = i + 1
+		from = i
 	}
-	count := first
+	count := 0
+	startId := ""
+	endId := ""
+	hasPreviousPage := true
+	hasNextPage := true
 	// 获取edges
 	edges := []PeopleEdge{}
+	db, err := bolt.Open("./data/data.db", 0600, nil)
+	CheckErr(err)
+	defer db.Close()
+	db.View(func(tx *bolt.Tx) error {
+		c := tx.Bucket([]byte(peopleBucket)).Cursor()
 
-	var i uint
-
-	for i = uint(from); i < uint(to); i++ {
-		_, people := GetPeopleByID(strconv.Itoa(int(i)))
-		if people.ID == "" {
-			break
+		// 判断是否还有前向页
+		k, v := c.First()
+		if from == -1 || strconv.Itoa(from) == string(k) {
+			startId = string(k)
+			hasPreviousPage = false
 		}
-		edges = append(edges, PeopleEdge{
-			Node:   people,
-			Cursor: encodeCursor(i),
-		})
-	}
 
+		if from == -1 {
+			for k, _ := c.First(); k != nil; k, _ = c.Next() {
+				_, people := GetPeopleByID(string(k), db)
+				edges = append(edges, PeopleEdge{
+					Node:   people,
+					Cursor: encodeCursor(string(k)),
+				})
+				count++
+				if count == *first {
+					endId = string(k)
+					break
+				}
+			}
+		} else {
+			for k, _ := c.First(); k != nil; k, _ = c.Next() {
+				if strconv.Itoa(from) == string(k) {
+					k, _ = c.Next()
+					startId = string(k)
+				}
+				if startId != "" {
+					_, people := GetPeopleByID(string(k), db)
+					edges = append(edges, PeopleEdge{
+						Node:   people,
+						Cursor: encodeCursor(string(k)),
+					})
+					count++
+					if count == *first {
+						endId = string(k)
+						break
+					}
+				}
+			}
+		}
+
+		k, v = c.Next()
+		if k == nil && v == nil {
+			hasNextPage = false
+		}
+		return nil
+	})
+	if count == 0 {
+		return PeopleConnection{}, nil
+	}
 	// 获取pageInfo
 	pageInfo := PageInfo{
-		StartCursor: encodeCursor(uint(from)),
+		HasPreviousPage: hasPreviousPage,
+		HasNextPage:     hasNextPage,
+		StartCursor:     encodeCursor(startId),
+		EndCursor:       encodeCursor(endId),
 	}
-	if from == 1 || len(edges) == 0 {
-		pageInfo.HasPreviousPage = false
-	} else {
-		pageInfo.HasPreviousPage = true
-	}
-	if i < uint(to) || len(edges) == 0 {
-		pageInfo.HasNextPage = false
-	} else if i == uint(to) {
-		_, people := GetPeopleByID(strconv.Itoa(int(i)))
-		if people.ID == "" {
-			pageInfo.HasNextPage = false
-		} else {
-			pageInfo.HasNextPage = true
-		}
-	}
-	if len(edges) == 0 {
-		pageInfo.EndCursor = encodeCursor(i)
-	} else {
-		pageInfo.EndCursor = encodeCursor(i - 1)
-	}
+
 	return PeopleConnection{
 		PageInfo:   pageInfo,
 		Edges:      edges,
-		TotalCount: int(i) - from,
+		TotalCount: count,
 	}, nil
 }
 func (r *queryResolver) Films(ctx context.Context, first *int, after *string) (FilmConnection, error) {
@@ -138,13 +169,13 @@ func (r *queryResolver) Planets(ctx context.Context, first *int, after *string) 
 }
 
 func (r *queryResolver) PeopleSearch(ctx context.Context, search string, first *int, after *string) (*PeopleConnection, error) {
-	fmt.Println(ctx)
+	// fmt.Println(ctx)
 	// token := &service.Token{}
 	// tokenJson, _ := ctx.Value(service.Issuer).(string)
 	// json.Unmarshal([]byte(tokenJson), token)
 	// service.ParseToken(token.SW_TOKEN, []byte(service.SecretKey))
 
-	from := 1
+	from := -1
 	if after != nil {
 		b, err := base64.StdEncoding.DecodeString(*after)
 		if err != nil {
@@ -154,66 +185,78 @@ func (r *queryResolver) PeopleSearch(ctx context.Context, search string, first *
 		if err != nil {
 			return &PeopleConnection{}, err
 		}
-		from = i + 1
+		from = i
 	}
+	count := 0
 	hasPreviousPage := false
-	for i := 1; i <= from; i++ {
-		_, people := GetPeopleByID(strconv.Itoa(from))
-		if people.ID == "" {
-			break
-		}
-		if people.Name == search {
-			hasPreviousPage = true
-			break
-		}
-	}
-
+	hasNextPage := false
 	// 获取edges
 	edges := []PeopleEdge{}
-	for {
-		_, people := GetPeopleByID(strconv.Itoa(from))
-		if people.ID == "" {
-			break
+	db, err := bolt.Open("./data/data.db", 0600, nil)
+	CheckErr(err)
+	defer db.Close()
+	db.View(func(tx *bolt.Tx) error {
+		c := tx.Bucket([]byte(peopleBucket)).Cursor()
+		k, _ := c.First()
+		// 判断是否还有前向页
+		if from != -1 {
+			for k != nil {
+				_, people := GetPeopleByID(string(k), db)
+				if people.Name == search {
+					hasPreviousPage = true
+				}
+				if strconv.Itoa(from) == string(k) {
+					k, _ = c.Next()
+					break
+				}
+				k, _ = c.Next()
+			}
 		}
-		if people.Name == search {
-			edges = append(edges, PeopleEdge{
-				Node:   people,
-				Cursor: encodeCursor(uint(from)),
-			})
-		}
-		from++
-		if len(edges) == *first {
-			break
-		}
-	}
 
-	// 获取pageInfo
-	startId, _ := strconv.Atoi(edges[0].Node.ID)
-	endId, _ := strconv.Atoi(edges[0].Node.ID)
-	pageInfo := PageInfo{
-		StartCursor:     encodeCursor(uint(startId)),
-		EndCursor:       encodeCursor(uint(endId)),
-		HasPreviousPage: hasPreviousPage,
-	}
-	hasNextPage := false
-	if len(edges) == *first {
-		for i := endId + 1; ; i++ {
-			_, people := GetPeopleByID(strconv.Itoa(i))
-			if people.ID == "" {
+		// 添加edge
+		for k != nil {
+			_, people := GetPeopleByID(string(k), db)
+			if people.Name == search {
+				edges = append(edges, PeopleEdge{
+					Node:   people,
+					Cursor: encodeCursor(string(k)),
+				})
+				count++
+			}
+			k, _ = c.Next()
+			if count == *first {
 				break
 			}
+		}
+
+		// 判断是否还有后向页
+		for k != nil {
+			_, people := GetPeopleByID(string(k), db)
 			if people.Name == search {
 				hasNextPage = true
 				break
 			}
+			k, _ = c.Next()
 		}
+		return nil
+	})
+	if count == 0 {
+		return &PeopleConnection{}, nil
 	}
-	pageInfo.HasNextPage = hasNextPage
+	// 获取pageInfo
+	pageInfo := PageInfo{
+		StartCursor:     encodeCursor(edges[0].Node.ID),
+		EndCursor:       encodeCursor(edges[count-1].Node.ID),
+		HasPreviousPage: hasPreviousPage,
+		HasNextPage:     hasNextPage,
+	}
+
 	return &PeopleConnection{
 		PageInfo:   pageInfo,
 		Edges:      edges,
-		TotalCount: len(edges),
+		TotalCount: count,
 	}, nil
+
 }
 func (r *queryResolver) FilmsSearch(ctx context.Context, search string, first *int, after *string) (*FilmConnection, error) {
 	panic("not implemented")
