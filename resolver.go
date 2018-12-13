@@ -70,14 +70,12 @@ func (r *queryResolver) Peoples(ctx context.Context, first *int, after *string) 
 		}
 		from = i + 1
 	}
-	to := -1
-	if first != nil {
-		to = from + *first
-	}
-
+	count := first
 	// 获取edges
 	edges := []PeopleEdge{}
+
 	var i uint
+
 	for i = uint(from); i < uint(to); i++ {
 		_, people := GetPeopleByID(strconv.Itoa(int(i)))
 		if people.ID == "" {
