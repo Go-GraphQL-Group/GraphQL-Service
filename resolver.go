@@ -1,7 +1,6 @@
 package GraphQL_Service
 
 import (
-	// "encoding/json"
 	"context"
 	"encoding/base64"
 	"errors"
@@ -11,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/boltdb/bolt"
-	// "github.com/Go-GraphQL-Group/GraphQL-Service/server/service"
 )
 
 type Resolver struct{}
