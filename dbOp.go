@@ -83,6 +83,7 @@ func convertStarship(starship1 *model1.Starship) *Starship {
 	starship2 := &Starship{}
 	starship2.ID = starship1.ID
 	starship2.Name = starship1.Name
+	starship2.Model = &starship1.Model
 	starship2.StarshipClass = &starship1.Starship_class
 	starship2.Manufacturer = &starship1.Manufacturer
 	starship2.CostInCredits = &starship1.Cost_in_credits
