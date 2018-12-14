@@ -60,3 +60,67 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write([]byte("logout"))
 }
+
+func ApiHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte(`lookup: {
+	people(id:string){
+		……
+	}
+	film(id:string){
+		……
+	}
+	planet(id:string){
+		……
+	}
+	specie(id:string){
+		……
+	}
+	starship(id:string){
+		……
+	}
+	vehicle(id:string){
+		……
+	}
+},
+browse: {
+	peoples(first: int, after: string){
+		……
+	}
+	films(first: int, after: string){
+		……
+	}
+	planets(first: int, after: string){
+		……
+	}
+	species(first: int, after: string){
+		……
+	}
+	starships(first: int, after: string){
+		……
+	}
+	vehicles(first: int, after: string){
+		……
+	}
+},
+search: {
+	peopleSearch(search: string, first: int, after: string){
+		……
+	}
+	filmsSearch(search: string, first: int, after: string){
+		……
+	}
+	planetsSearch(search: string, first: int, after: string){
+		……
+	}
+	speciesSearch(search: string, first: int, after: string){
+		……
+	}
+	starshipsSearch(search: string, first: int, after: string){
+		……
+	}
+	vehiclesSearch(search: string, first: int, after: string){
+		……
+	}
+}
+	`))
+}

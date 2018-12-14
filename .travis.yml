@@ -13,16 +13,18 @@ go:
   - 1.11
 
 install: #依赖安装
+  - go get github.com/99designs/gqlgen
   - go get github.com/go-playground/overalls  #overalls能够支持到各级子目录
   - go get github.com/mattn/goveralls         #goveralls是coveralls对golang的测试覆盖率支持命令
   - go get github.com/smartystreets/goconvey  #很好用的测试工具
-  - mkdir -p $GOPATH/src/github.com/Go-GraphQL-Group
-  - cd $GOPATH/src/github.com/Go-GraphQL-Group/GraphQL-Service
 
 script: # 集成脚本
-  - overalls -project=github.com/Go-GraphQL-Group/GraphQL-Service -covermode=count -ignore='.git,_vendor'
-  - goveralls -coverprofile=coverage.out -service=travis-ci
-  - go test ./...
+  - go build
+  - go test -v ./test/... -covermode=count -coverprofile=coverage.out -coverpkg="github.com/Go-GraphQL-Group/GraphQL-Service/..."
+  - $GOPATH/bin/goveralls -v -coverprofile=coverage.out -service=travis-ci
+  # - $GOPATH/bin/overalls -project=github.com/Go-GraphQL-Group/GraphQL-Service -covermode=count -ignore='.git,_vendor'
+  # - $GOPATH/bin/goveralls -coverprofile=overalls.coverprofile -service=travis-ci -repotoken $COVERALLS_TOKEN
+  # - go test -race -coverprofile=coverage.txt -covermode=atomic
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
