@@ -1,4 +1,6 @@
 ## GraphQL-Service
+[![Build Status](https://travis-ci.com/Go-GraphQL-Group/GraphQL-Service.svg?branch=master)](https://travis-ci.com/Go-GraphQL-Group/GraphQL-Service?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/Go-GraphQL-Group/GraphQL-Service/badge.svg?branch=master)](https://coveralls.io/github/Go-GraphQL-Group/GraphQL-Service?branch=master)
 
 ### 介绍
 
