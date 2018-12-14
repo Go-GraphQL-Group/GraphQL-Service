@@ -17,7 +17,8 @@ install: #依赖安装
   - go get github.com/go-playground/overalls  #overalls能够支持到各级子目录
   - go get github.com/mattn/goveralls         #goveralls是coveralls对golang的测试覆盖率支持命令
   - go get github.com/smartystreets/goconvey  #很好用的测试工具
-
+  - go get github.com/github.com/Go-GraphQL-Group/SW-Crawler
+  - go get github.com/github.com/boltdb/bolt
 script: # 集成脚本
   - go build
   - go test -v ./test/... -covermode=count -coverprofile=coverage.out -coverpkg="github.com/Go-GraphQL-Group/GraphQL-Service/..."
