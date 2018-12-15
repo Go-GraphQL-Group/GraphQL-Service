@@ -11,7 +11,7 @@
 ### 开发环境选取
 1. API使用[GraphQL](http://graphql.cn/learn/)规范进行设计
 2. 客户端使用[Vue框架](https://cn.vuejs.org/index.html)
-3. 服务器使用GraphQL官方提供的生成基于 graphql 的服务器的库[GQLGen](https://github.com/graphql-go/graphql)进行开发。
+3. 服务器使用GraphQL官方推荐的生成基于 graphql 的服务器的库[GQLGen](https://github.com/graphql-go/graphql)进行开发。
 4. 数据库使用[BoltDB](https://github.com/boltdb/bolt)实现
 ### [GITHUB传送门](https://github.com/Go-GraphQL-Group)
 ---
