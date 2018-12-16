@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/99designs/gqlgen/handler"
@@ -18,7 +19,7 @@ func NewServer() *negroni.Negroni {
 	initRoutes(router)
 
 	n := negroni.Classic()
-
+	n.Use(negroni.NewStatic(http.Dir("./static")))
 	n.UseHandler(router)
 	return n
 }
