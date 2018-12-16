@@ -585,11 +585,7 @@ func (r *queryResolver) Planets(ctx context.Context, first *int, after *string) 
 }
 
 func (r *queryResolver) PeopleSearch(ctx context.Context, search string, first *int, after *string) (*PeopleConnection, error) {
-	// fmt.Println(ctx)
-	// token := &service.Token{}
-	// tokenJson, _ := ctx.Value(service.Issuer).(string)
-	// json.Unmarshal([]byte(tokenJson), token)
-	// service.ParseToken(token.SW_TOKEN, []byte(service.SecretKey))
+
 	if strings.HasPrefix(search, "Name:") {
 		search = strings.TrimPrefix(search, "Name:")
 	} else {
