@@ -8,12 +8,12 @@ import (
 
 var tokens []Token
 
-const TokenName = "SW-TOKEN"
+const TokenName = "sw_token"
 const Issuer = "Go-GraphQL-Group"
 const SecretKey = "StarWars"
 
 type Token struct {
-	SW_TOKEN string `json:"SW-TOKEN"`
+	SW_TOKEN string `json:"sw_token"`
 }
 
 type jwtCustomClaims struct {

@@ -8,6 +8,31 @@ import (
 	"strings"
 )
 
+type RespData struct {
+	Status bool   `json:"status"`
+	Msg    string `json:"msg"`
+	Token
+}
+
+// type ReqBody struct {
+// 	Query         string                 `json:"query"`
+// 	OperationName string                 `json:"operationName"`
+// 	Variables     map[string]interface{} `json:"variables"`
+// 	SW_Token      string                 `json:"sw_token"`
+// }
+
+func writeResp(status bool, msg string, token Token) []byte {
+	RespData := RespData{}
+	RespData.Status = status
+	RespData.Msg = msg
+	RespData.Token = token
+	respose, err := json.Marshal(RespData)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return respose
+}
+
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	fmt.Println(r.Form.Get("username"))
@@ -20,7 +45,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if strings.ToLower(r.Form.Get("username")) != "admin" || r.Form.Get("password") != "password" {
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Println("Error logging in")
-		fmt.Fprint(w, "Invalid credentials")
+		w.Write(writeResp(false, "Error logging in", Token{}))
+		// fmt.Fprint(w, "Invalid credentials")
 		return
 	}
 
@@ -28,26 +54,27 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, "Error extracting the key")
+		w.Write(writeResp(false, "Error extracting the key", Token{}))
 		log.Fatal(err)
 	}
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
-	tokenBytes, err := json.Marshal(token)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, "Error marshal the token")
+		w.Write(writeResp(false, "Error marshal the token", Token{}))
 		log.Fatal(err)
 	}
 	tokens = append(tokens, token)
-	w.Write(tokenBytes)
+	w.Write(writeResp(true, "Succeed to login", token))
 }
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	tokenStr := ""
 	for k, v := range r.Header {
-		if strings.ToUpper(k) == TokenName {
+		if strings.ToLower(k) == TokenName {
 			tokenStr = v[0]
 			break
 		}
@@ -58,11 +85,17 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-	w.Write([]byte("logout"))
+	w.Write(writeResp(false, "Succeed to logout", Token{}))
 }
 
 func ApiHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(`lookup: {
+	w.Write([]byte(`{
+	127.0.0.1:9090/api/login
+	127.0.0.1:9090/api/query
+	127.0.0.1:9090/api/logout
+}
+The format of query:
+query{
 	people(id:string){
 		……
 	}
@@ -81,8 +114,7 @@ func ApiHandler(w http.ResponseWriter, r *http.Request) {
 	vehicle(id:string){
 		……
 	}
-},
-browse: {
+
 	peoples(first: int, after: string){
 		……
 	}
@@ -101,8 +133,7 @@ browse: {
 	vehicles(first: int, after: string){
 		……
 	}
-},
-search: {
+
 	peopleSearch(search: string, first: int, after: string){
 		……
 	}

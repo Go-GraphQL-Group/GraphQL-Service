@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const defaultPort = "8080"
+const defaultPort = "9090"
 
 func NewServer() *negroni.Negroni {
 	router := mux.NewRouter()
@@ -24,12 +24,12 @@ func NewServer() *negroni.Negroni {
 }
 
 func initRoutes(router *mux.Router) {
-	router.HandleFunc("/login", service.LoginHandler).Methods("POST")
+	router.HandleFunc("/api/login", service.LoginHandler).Methods("POST")
 	router.Use(service.TokenMiddleware)
-	router.HandleFunc("/", service.ApiHandler).Methods("GET")
+	router.HandleFunc("/api", service.ApiHandler).Methods("GET")
 	// router.HandleFunc("/", handler.Playground("GraphQL playground", "/query"))
-	router.HandleFunc("/query", handler.GraphQL(GraphQL_Service.NewExecutableSchema(GraphQL_Service.Config{Resolvers: &GraphQL_Service.Resolver{}})))
-	router.HandleFunc("/logout", service.LogoutHandler).Methods("POST", "GET")
+	router.HandleFunc("/api/query", handler.GraphQL(GraphQL_Service.NewExecutableSchema(GraphQL_Service.Config{Resolvers: &GraphQL_Service.Resolver{}})))
+	router.HandleFunc("/api/logout", service.LogoutHandler).Methods("POST", "GET")
 }
 
 func main() {
