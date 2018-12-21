@@ -28,3 +28,16 @@ $ go get -d github.com/Go-GraphQL-Group/GraphQL-Service
 $ cd $GOPATH/src/github.com/Go-GraphQL-Group/GraphQL-Service
 $ go run server/main.go
 ```
+
+### 生产Docker镜像
+```bash
+# 进入项目地址
+$ cd $GOPATH/src/github.com/Go-GraphQL-Group/GraphQL-Service
+# 生成容器镜像
+$ sudo docker build -t gqlservice .
+```
+
+### 在指定IP和端口运行镜像
+```bash
+$ sudo docker run -d -p <The IP you want to use>:9090:9090 gqlservice
+```
