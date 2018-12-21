@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"testing"
 
-	service "github.com/Go-GraphQL-Group/GraphQL-Service"
+	boltdb "github.com/Go-GraphQL-Group/GraphQL-Service/db"
+	"github.com/Go-GraphQL-Group/GraphQL-Service/model"
 	"github.com/boltdb/bolt"
 )
 
 func TestGetFilmByID(t *testing.T) {
-	film2 := &service.Film{}
-	db, _ := bolt.Open("../data/data.db", 0600, nil)
+	film2 := &model.Film{}
+	db, _ := bolt.Open("data/data.db", 0600, nil)
 	defer db.Close()
-	err, film1 := service.GetFilmByID("2", db)
+	err, film1 := boltdb.GetFilmByID("2", db)
 	if err != nil {
 		t.Error("测试失败")
 	}
@@ -31,10 +32,10 @@ func TestGetFilmByID(t *testing.T) {
 }
 
 func TestGetPeopleByID(t *testing.T) {
-	people2 := &service.People{}
-	db, _ := bolt.Open("../data/data.db", 0600, nil)
+	people2 := &model.People{}
+	db, _ := bolt.Open("data/data.db", 0600, nil)
 	defer db.Close()
-	err, people1 := service.GetPeopleByID("1", db)
+	err, people1 := boltdb.GetPeopleByID("1", db)
 	if err != nil {
 		t.Error("测试失败")
 	}
@@ -53,10 +54,10 @@ func TestGetPeopleByID(t *testing.T) {
 }
 
 func TestGetPlanetByID(t *testing.T) {
-	Planet2 := &service.Planet{}
-	db, _ := bolt.Open("../data/data.db", 0600, nil)
+	Planet2 := &model.Planet{}
+	db, _ := bolt.Open("data/data.db", 0600, nil)
 	defer db.Close()
-	err, Planet1 := service.GetPlanetByID("1", db)
+	err, Planet1 := boltdb.GetPlanetByID("1", db)
 	if err != nil {
 		t.Error("测试失败")
 	}
@@ -75,10 +76,10 @@ func TestGetPlanetByID(t *testing.T) {
 }
 
 func TestGetSpecieByID(t *testing.T) {
-	Specie2 := &service.Specie{}
-	db, _ := bolt.Open("../data/data.db", 0600, nil)
+	Specie2 := &model.Specie{}
+	db, _ := bolt.Open("data/data.db", 0600, nil)
 	defer db.Close()
-	err, Specie1 := service.GetSpeciesByID("1", db)
+	err, Specie1 := boltdb.GetSpeciesByID("1", db)
 	if err != nil {
 		t.Error("测试失败")
 	}
@@ -97,10 +98,10 @@ func TestGetSpecieByID(t *testing.T) {
 }
 
 func TestGetStarshipByID(t *testing.T) {
-	Starship2 := &service.Starship{}
-	db, _ := bolt.Open("../data/data.db", 0600, nil)
+	Starship2 := &model.Starship{}
+	db, _ := bolt.Open("data/data.db", 0600, nil)
 	defer db.Close()
-	err, Starship1 := service.GetStarshipByID("1", db)
+	err, Starship1 := boltdb.GetStarshipByID("1", db)
 	if err != nil {
 		t.Error("测试失败")
 	}
@@ -118,10 +119,10 @@ func TestGetStarshipByID(t *testing.T) {
 	}
 }
 func TestGetVehicleByID(t *testing.T) {
-	Vehicle2 := &service.Vehicle{}
-	db, _ := bolt.Open("../data/data.db", 0600, nil)
+	Vehicle2 := &model.Vehicle{}
+	db, _ := bolt.Open("data/data.db", 0600, nil)
 	defer db.Close()
-	err, Vehicle1 := service.GetVehicleByID("1", db)
+	err, Vehicle1 := boltdb.GetVehicleByID("1", db)
 	if err != nil {
 		t.Error("测试失败")
 	}
