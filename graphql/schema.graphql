@@ -1,0 +1,984 @@
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+    """
+    When paginating forwards, are there more items?
+    """
+    hasNextPage: Boolean!
+
+    """
+    When paginating backwards, are there more items?
+    """
+    hasPreviousPage: Boolean!
+
+    """
+    When paginating backwards, the cursor to continue.
+    """
+    startCursor: ID!
+
+    """
+    When paginating forwards, the cursor to continue.
+    """
+    endCursor: ID!
+}
+
+"""
+The genders of people in the Star Wars universe.
+"""
+enum Gender {
+    """
+    Does not have a gender.
+    """
+    NA
+    
+    """
+    Male.
+    """
+    MALE
+    
+    """
+    Female.
+    """
+    FEMALE
+}
+
+"""
+The class of vehicle in the Star Wars universe.
+"""
+enum VehicleClass {
+    """
+    Wheeled.
+    """
+    WHEELED
+    
+    """
+    Repulsorcraft.
+    """
+    REPULSOCRAFT
+}
+
+"""
+A People resource is an individual person or character within the Star Wars universe.
+"""
+type People {
+    """
+    The id of this person.
+    """
+    id: ID!
+    
+    """
+    The name of this person.
+    """
+    name: String!
+    
+    """
+    The birth year of the person, using the in-universe standard of BBY or ABY - Before the Battle of Yavin or After the Battle of Yavin. The Battle of Yavin is a battle that occurs at the end of Star Wars episode IV: A New Hope.
+    """
+    birth_year: String
+    
+    """
+    The eye color of this person. Will be "unknown" if not known or "n/a" if the person does not have an eye.
+    """
+    eye_color: String
+    
+    """
+    The gender of this person. Either "Male", "Female" or "unknown", "n/a" if the person does not have a gender.
+    """
+    gender: String
+    
+    """
+    The hair color of this person. Will be "unknown" if not known or "n/a" if the person does not have hair.
+    """
+    hair_color: String
+    
+    """
+    The height of the person in centimeters.
+    """
+    height: String
+    
+    """
+    The mass of the person in kilograms.
+    """
+    mass: String
+    
+    """
+    The skin color of this person.
+    """
+    skin_color: String
+    
+    """
+    A planet resource, a planet that this person was born on or inhabits.
+    """
+    homeworld: Planet
+    
+    """
+    An array of film resources that this person has been in.
+    """
+    films: [Film]
+    
+    """
+    An array of specie resources that this person belongs to.
+    """
+    species: [Specie]
+    
+    """
+    An array of starship resources that this person has piloted.
+    """
+    starships: [Starship]
+    
+    """
+    An array of vehicle resources that this person has piloted.
+    """
+    vehicles: [Vehicle]
+}
+
+"""
+A connection to a list of items.
+"""
+type PeopleConnection {
+    """
+    Information to aid in pagination.
+    """
+    pageInfo: PageInfo!
+
+    """
+    A list of edges.
+    """
+    edges: [PeopleEdge!]
+
+    """
+    A count of the total number of items in this connection, ignoring pagination.
+    """
+    totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type PeopleEdge {
+    """
+    The item at the end of the edge.
+    """
+    node: People
+
+    """
+    A cursor for use in pagination.
+    """
+    cursor: ID!
+}
+
+"""
+A Film resource is a single film.
+"""
+type Film {
+    """
+    The id of this film.
+    """
+    id: ID!
+    
+    """
+    The title of this film.
+    """
+    title: String!
+    
+    """
+    The episode number of this film.
+    """
+    episode_id: Int
+    
+    """
+    The opening paragraphs at the beginning of this film.
+    """
+    opening_crawl: String
+    
+    """
+    The name of the director of this film.
+    """
+    director: String
+    
+    """
+    The name(s) of the producer(s) of this film. Comma separated.
+    """
+    producer: String
+    
+    """
+    The ISO 8601 date format of film release at original creator country.
+    """
+    release_date: String
+    
+    """
+    An array of species resources that are in this film.
+    """
+    species: [Specie]
+    
+    """
+    An array of starship resources that are in this film.
+    """
+    starships: [Starship]
+    
+    """
+    An array of vehicle resources that are in this film.
+    """
+    vehicles: [Vehicle]
+    
+    """
+    An array of People resources that are in this film.
+    """
+    characters: [People]
+    
+    """
+    An array of planet resources that are in this film.
+    """
+    planets: [Planet]
+}
+
+"""
+A connection to a list of items.
+"""
+type FilmConnection {
+    """
+    Information to aid in pagination.
+    """
+    pageInfo: PageInfo!
+
+    """
+    A list of edges.
+    """
+    edges: [FilmEdge!]
+
+    """
+    A count of the total number of items in this connection, ignoring pagination.
+    """
+    totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type FilmEdge {
+    """
+    The item at the end of the edge.
+    """
+    node: Film
+
+    """
+    A cursor for use in pagination.
+    """
+    cursor: ID!
+}
+
+"""
+A Starship resource is a single transport craft that has hyperdrive capability.
+"""
+type Starship {
+    """
+    The id of this starship.
+    """
+    id: ID!
+    
+    """
+    The name of this starship. The common name, such as "Death Star".
+    """
+    name: String!
+    
+    """
+    The model or official name of this starship. Such as "T-65 X-wing" or "DS-1 Orbital Battle Station".
+    """
+    model: String
+    
+    """
+    The class of this starship, such as "Starfighter" or "Deep Space Mobile Battlestation"
+    """
+    starship_class: String
+    
+    """
+    The manufacturer of this starship. Comma separated if more than one.
+    """
+    manufacturer: String
+    
+    """
+    The cost of this starship new, in galactic credits.
+    """
+    cost_in_credits: String
+    
+    """
+    The length of this starship in meters.
+    """
+    length: String
+    
+    """
+    The number of personnel needed to run or pilot this starship.
+    """
+    crew: String
+    
+    """
+    The number of non-essential Vehicle this starship can transport.
+    """
+    passengers: String
+    
+    """
+    The maximum speed of this starship in the atmosphere. "N/A" if this starship is incapable of atmospheric flight.
+    """
+    max_atmosphering_speed: String
+    
+    """
+    The class of this starships hyperdrive.
+    """
+    hyperdrive_rating: String
+    
+    """
+    The Maximum number of Megalights this starship can travel in a standard hour. A "Megalight" is a standard unit of distance and has never been defined before within the Star Wars universe. This figure is only really useful for measuring the difference in speed of starships. We can assume it is similar to AU, the distance between our Sun (Sol) and Earth.
+    """
+    MGLT: String
+    
+    """
+    The maximum number of kilograms that this starship can transport.
+    """
+    cargo_capacity: String
+    
+    """
+    The maximum length of time that this starship can provide consumables for its entire crew without having to resupply.
+    """
+    consumables : String
+    
+    """
+    An array of film resources that this starship has appeared in.
+    """
+    films: [Film]
+    
+    """
+    An array of People resources that this starship has been piloted by.
+    """
+    pilots: [People]
+}
+
+"""
+A connection to a list of items.
+"""
+type StarshipConnection {
+    """
+    Information to aid in pagination.
+    """
+    pageInfo: PageInfo!
+
+    """
+    A list of edges.
+    """
+    edges: [StarshipEdge!]
+
+    """
+    A count of the total number of items in this connection, ignoring pagination.
+    """
+    totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type StarshipEdge {
+    """
+    The item at the end of the edge.
+    """
+    node: Starship
+
+    """
+    A cursor for use in pagination.
+    """
+    cursor: ID!
+}
+
+"""
+A Vehicle resource is a single transport craft that does not have hyperdrive capability.
+"""
+type Vehicle {
+    """
+    The id of this vehicle.
+    """
+    id: ID!
+    
+    """
+    The name of this vehicle. The common name, such as "Sand Crawler" or "Speeder bike".
+    """
+    name: String!
+    
+    """
+    The model or official name of this vehicle. Such as "All-Terrain Attack Transport".
+    """
+    model: String
+    
+    """
+    The class of this vehicle, such as "Wheeled" or "Repulsorcraft".
+    """
+    vehicle_class: VehicleClass
+    
+    """
+    The manufacturer of this vehicle. Comma separated if more than one.
+    """
+    manufacturer: String
+    
+    """
+    The length of this vehicle in meters.
+    """
+    length: String
+    
+    """
+    The cost of this vehicle new, in Galactic Credits.
+    """
+    cost_in_credits: String
+    
+    """
+    The number of personnel needed to run or pilot this vehicle.
+    """
+    crew: String
+    
+    """
+    The number of non-essential Vehicle this vehicle can transport.
+    """
+    passengers: String
+    
+    """
+    The maximum speed of this vehicle in the atmosphere.
+    """
+    max_atmosphering_speed: String
+    
+    """
+    The maximum number of kilograms that this vehicle can transport.
+    """
+    cargo_capacity: String
+    
+    """
+    The maximum length of time that this vehicle can provide consumables for its entire crew without having to resupply.
+    """
+    consumables: String
+    
+    """
+    An array of film resources that this vehicle has appeared in.
+    """
+    films: [Film]
+    
+    """
+    An array of People resources that this vehicle has been piloted by.
+    """
+    pilots: [People]
+}
+
+"""
+A connection to a list of items.
+"""
+type VehicleConnection {
+    """
+    Information to aid in pagination.
+    """
+    pageInfo: PageInfo!
+
+    """
+    A list of edges.
+    """
+    edges: [VehicleEdge!]
+
+    """
+    A count of the total number of items in this connection, ignoring pagination.
+    """
+    totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type VehicleEdge {
+    """
+    The item at the end of the edge.
+    """
+    node: Vehicle
+
+    """
+    A cursor for use in pagination.
+    """
+    cursor: ID!
+}
+
+"""
+A Species resource is a type of person or character within the Star Wars Universe.
+"""
+type Specie {
+    """
+    The id of this specie.
+    """
+    id: ID!
+    
+    """
+    The name of this species.
+    """
+    name: String!
+    
+    """
+    The classification of this species, such as "mammal" or "reptile".
+    """
+    classification: String
+    
+    """
+    The designation of this species, such as "sentient".
+    """
+    designation: String
+    
+    """
+    The average height of this species in centimeters.
+    """
+    average_height: String
+    
+    """
+    The average lifespan of this species in years.
+    """
+    average_lifespan: String
+    
+    """
+    A comma-separated string of common eye colors for this species, "none" if this species does not typically have eyes.
+    """
+    eye_colors: String
+    
+    """
+    A comma-separated string of common hair colors for this species, "none" if this species does not typically have hair.
+    """
+    hair_colors: String
+    
+    """
+    A comma-separated string of common skin colors for this species, "none" if this species does not typically have skin.
+    """
+    skin_colors: String
+    
+    """
+    The language commonly spoken by this species.
+    """
+    language: String
+    
+    """
+    A planet resource, a planet that this species originates from.
+    """
+    homeworld: Planet
+    
+    """
+    An array of Vehicle resources that are a part of this species.
+    """
+    Vehicle: [Vehicle]
+    
+    """
+    An array of film resources that this species has appeared in.
+    """
+    films: [Film]
+        
+    """
+    An array of People resources that this species has appeared in.
+    """
+    People: [People]
+}
+
+"""
+A connection to a list of items.
+"""
+type SpecieConnection {
+    """
+    Information to aid in pagination.
+    """
+    pageInfo: PageInfo!
+
+    """
+    A list of edges.
+    """
+    edges: [SpecieEdge!]
+
+    """
+    A count of the total number of items in this connection, ignoring pagination.
+    """
+    totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type SpecieEdge {
+    """
+    The item at the end of the edge.
+    """
+    node: Specie
+
+    """
+    A cursor for use in pagination.
+    """
+    cursor: ID!
+}
+
+"""
+A Planet resource is a large mass, planet or planetoid in the Star Wars Universe, at the time of 0 ABY.
+"""
+type Planet {
+    """
+    The id of this planet.
+    """
+    id: ID!
+    
+    """
+    The name of this planet.
+    """
+    name: String!
+    
+    """
+    The diameter of this planet in kilometers.
+    """
+    diameter: String
+    
+    """
+    The number of standard hours it takes for this planet to complete a single rotation on its axis.
+    """
+    rotation_period: String
+    
+    """
+    The number of standard days it takes for this planet to complete a single orbit of its local star.
+    """
+    orbital_period: String
+    
+    """
+    A number denoting the gravity of this planet, where "1" is normal or 1 standard G. "2" is twice or 2 standard Gs. "0.5" is half or 0.5 standard Gs.
+    """
+    gravity: String
+    
+    """
+    The average population of sentient beings inhabiting this planet.
+    """
+    population: String
+    
+    """
+    The climate of this planet. Comma separated if diverse.
+    """
+    climate: String
+    
+    """
+    The terrain of this planet. Comma separated if diverse.
+    """
+    terrain: String
+    
+    """
+    The percentage of the planet surface that is naturally occurring water or bodies of water.
+    """
+    surface_water: String
+    
+    """
+    An array of People resources that live on this planet.
+    """
+    residents: [People]
+    
+    """
+    An array of film resources that this planet has appeared in.
+    """
+    films: [Film]
+}
+
+"""
+A connection to a list of items.
+"""
+type PlanetConnection {
+    """
+    Information to aid in pagination.
+    """
+    pageInfo: PageInfo!
+
+    """
+    A list of edges.
+    """
+    edges: [PlanetEdge!]
+
+    """
+    A count of the total number of items in this connection, ignoring pagination.
+    """
+    totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type PlanetEdge {
+    """
+    The item at the end of the edge.
+    """
+    node: Planet
+
+    """
+    A cursor for use in pagination.
+    """
+    cursor: ID!
+}
+
+"""
+The query root, from which multiple types of requests can be made.
+"""
+type Query {
+    """
+    Look up a specific people by its ID.
+    """
+    people(
+        """
+        The ID of the entity.
+        """
+        id: ID!
+    ): People
+
+    """
+    Look up a specific film by its ID.
+    """
+    film(
+        """
+        The ID of the entity.
+        """
+        id: ID!
+    ): Film
+    
+    """
+    Look up a specific starship by its ID.
+    """
+    starship(
+        """
+        The ID of the entity.
+        """
+        id: ID!
+    ): Starship
+    
+    """
+    Look up a specific vehicle by its ID.
+    """
+    vehicle(
+        """
+        The ID of the entity.
+        """
+        id: ID!
+    ): Vehicle
+    
+    """
+    Look up a specific specie by its ID.
+    """
+    specie(
+        """
+        The ID of the entity.
+        """
+        id: ID!
+    ): Specie
+    
+    """
+    Look up a specific planet by its ID.
+    """
+    planet(
+        """
+        The ID of the entity.
+        """
+        id: ID!
+    ): Planet
+
+    """
+    Browse people entities.
+    """
+    peoples (
+        """
+        The number of entities in the connection.
+        """
+        first: Int
+
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): PeopleConnection!
+
+    """
+    Browse film entities.
+    """
+    films (
+        """
+        The number of entities in the connection.
+        """
+        first: Int
+
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): FilmConnection!
+
+    """
+    Browse starship entities.
+    """
+    starships (
+        """
+        The number of entities in the connection.
+        """
+        first: Int
+
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): StarshipConnection!
+
+    """
+    Browse vehicle entities.
+    """
+    vehicles (
+        """
+        The number of entities in the connection.
+        """
+        first: Int
+
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): VehicleConnection!
+
+    """
+    Browse specie entities.
+    """
+    species (
+        """
+        The number of entities in the connection.
+        """
+        first: Int
+
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): SpecieConnection!
+
+    """
+    Browse planet entities.
+    """
+    planets (
+        """
+        The number of entities in the connection.
+        """
+        first: Int
+
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): PlanetConnection!
+
+    """
+    Search for people entities matching the given query.
+    """
+    peopleSearch (
+        """
+        The search field for name, in Lucene search syntax.
+        """
+        search: String!
+        
+        """
+        The number of entities in the connection.
+        """
+        first: Int
+
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): PeopleConnection
+
+    """
+    Search for film entities matching the given query.
+    """
+    filmsSearch (
+        """
+        The search field for title, in Lucene search syntax.
+        """
+        search: String!
+        
+        """
+        The number of entities in the connection.
+        """
+        first: Int
+
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): FilmConnection
+
+    """
+    Search for starship entities matching the given query.
+    """
+    starshipsSearch (
+        """
+        The search field for name or model, in Lucene search syntax.
+        """
+        search: String!
+        
+        """
+        The number of entities in the connection.
+        """
+        first: Int
+
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): StarshipConnection
+
+    """
+    Search for vehicle entities matching the given query.
+    """
+    vehiclesSearch (
+        """
+        The search field for name or model, in Lucene search syntax.
+        """
+        search: String!
+        
+        """
+        The number of entities in the connection.
+        """
+        first: Int
+
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): VehicleConnection
+
+    """
+    Search for specie entities matching the given query.
+    """
+    speciesSearch (
+        """
+        The search field for name, in Lucene search syntax.
+        """
+        search: String!
+        
+        """
+        The number of entities in the connection.
+        """
+        first: Int
+
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): SpecieConnection
+
+    """
+    Search for planet entities matching the given query.
+    """
+    planetsSearch (
+        """
+        The search field for name, in Lucene search syntax.
+        """
+        search: String!
+        
+        """
+        The number of entities in the connection.
+        """
+        first: Int
+
+        """
+        The connection follows by.
+        """
+        after: ID
+    ): PlanetConnection
+}
