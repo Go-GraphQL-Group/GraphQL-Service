@@ -7,18 +7,16 @@ import (
 	"strconv"
 	"strings"
 
-	boltdb "github.com/Go-GraphQL-Group/GraphQL-Service/db"
+	"github.com/Go-GraphQL-Group/GraphQL-Service/db"
 	"github.com/Go-GraphQL-Group/GraphQL-Service/model"
-	"github.com/boltdb/bolt"
 )
 
 func (r *queryResolver) Vehicle(ctx context.Context, id string) (*model.Vehicle, error) {
-	err, vehicle := boltdb.GetVehicleByID(id, nil)
-	checkErr(err)
-	return vehicle, err
+	vehicle := db.MySQLGetVehicleByID(id)
+	return vehicle, nil
 }
 func (r *queryResolver) Vehicles(ctx context.Context, first *int, after *string) (model.VehicleConnection, error) {
-	from := -1
+	from := 1
 	if after != nil {
 		b, err := base64.StdEncoding.DecodeString(*after)
 		if err != nil {
@@ -28,94 +26,57 @@ func (r *queryResolver) Vehicles(ctx context.Context, first *int, after *string)
 		if err != nil {
 			return model.VehicleConnection{}, err
 		}
-		from = i
+		from = i + 1
 	}
-	count := 0
-	startID := ""
 	hasPreviousPage := true
 	hasNextPage := true
+
+	if from == 1 {
+		hasPreviousPage = false
+	}
 	// 获取edges
 	edges := []model.VehicleEdge{}
-	db, err := bolt.Open("data/data.db", 0600, nil)
-	checkErr(err)
-	defer db.Close()
-	db.View(func(tx *bolt.Tx) error {
-		c := tx.Bucket([]byte(vehiclesBucket)).Cursor()
 
-		// 判断是否还有前向页
-		k, v := c.First()
-		if from == -1 || strconv.Itoa(from) == string(k) {
-			startID = string(k)
-			hasPreviousPage = false
+	for len(edges) < *first {
+		vehicle := db.MySQLGetVehicleBy_id(strconv.Itoa(from))
+		if vehicle.ID == "" {
+			break
 		}
+		edges = append(edges, model.VehicleEdge{
+			Node:   vehicle,
+			Cursor: encodeCursor(strconv.Itoa(from)),
+		})
+		from++
+	}
 
-		if from == -1 {
-			for k, _ := c.First(); k != nil; k, _ = c.Next() {
-				_, vehicle := boltdb.GetVehicleByID(string(k), db)
-				edges = append(edges, model.VehicleEdge{
-					Node:   vehicle,
-					Cursor: encodeCursor(string(k)),
-				})
-				count++
-				if count == *first {
-					break
-				}
-			}
-		} else {
-			for k, _ := c.First(); k != nil; k, _ = c.Next() {
-				if strconv.Itoa(from) == string(k) {
-					k, _ = c.Next()
-					startID = string(k)
-				}
-				if startID != "" {
-					_, vehicle := boltdb.GetVehicleByID(string(k), db)
-					edges = append(edges, model.VehicleEdge{
-						Node:   vehicle,
-						Cursor: encodeCursor(string(k)),
-					})
-					count++
-					if count == *first {
-						break
-					}
-				}
-			}
-		}
+	if len(edges) < *first {
+		hasNextPage = false
+	}
 
-		k, v = c.Next()
-		if k == nil && v == nil {
-			hasNextPage = false
-		}
-		return nil
-	})
-	if count == 0 {
+	if len(edges) == 0 {
 		return model.VehicleConnection{}, nil
 	}
 	// 获取pageInfo
 	pageInfo := model.PageInfo{
 		HasPreviousPage: hasPreviousPage,
 		HasNextPage:     hasNextPage,
-		StartCursor:     encodeCursor(startID),
-		EndCursor:       encodeCursor(edges[count-1].Node.ID),
+		StartCursor:     encodeCursor(strconv.Itoa(from - len(edges))),
+		EndCursor:       encodeCursor(strconv.Itoa(from - 1)),
 	}
 
 	return model.VehicleConnection{
 		PageInfo:   pageInfo,
 		Edges:      edges,
-		TotalCount: count,
+		TotalCount: len(edges),
 	}, nil
 }
 func (r *queryResolver) VehiclesSearch(ctx context.Context, search string, first *int, after *string) (*model.VehicleConnection, error) {
-	//搜索对象的类型
-	searchType := 0
 	if strings.HasPrefix(search, "Name:") {
-		search = strings.TrimPrefix(search, "Name:")
-	} else if strings.HasPrefix(search, "Model:") {
-		search = strings.TrimPrefix(search, "Model:")
-		searchType = 1
+		search = strings.TrimSpace(strings.TrimPrefix(search, "Name:"))
 	} else {
-		return &model.VehicleConnection{}, errors.New("Search content must be ' Name:<Vehicle's Name you want to get> ' OR ' Model:<Vehicle's Model yout want to get> ' ")
+		return &model.VehicleConnection{}, errors.New("Search content must be ' Name:<Vehicle's Name you want to get> ' ")
 	}
-	from := -1
+	from := 1
 	if after != nil {
 		b, err := base64.StdEncoding.DecodeString(*after)
 		if err != nil {
@@ -125,91 +86,61 @@ func (r *queryResolver) VehiclesSearch(ctx context.Context, search string, first
 		if err != nil {
 			return &model.VehicleConnection{}, err
 		}
-		from = i
+		from = i + 1
 	}
 	count := 0
-	hasPreviousPage := false
 	hasNextPage := false
+	hasPreviousPage := false
+	// 查询from之前是否存在满足search条件的条目
+	for i := 1; i < from; i++ {
+		vehicle := db.MySQLGetVehicleBy_id(strconv.Itoa(i))
+		if vehicle.ID == "" {
+			break
+		}
+		if vehicle.Name == search {
+			hasPreviousPage = true
+			break
+		}
+	}
 	// 获取edges
 	edges := []model.VehicleEdge{}
-	db, err := bolt.Open("data/data.db", 0600, nil)
-	checkErr(err)
-	defer db.Close()
-	db.View(func(tx *bolt.Tx) error {
-		c := tx.Bucket([]byte(vehiclesBucket)).Cursor()
-		k, _ := c.First()
-		// 判断是否还有前向页
-		if from != -1 {
-			for k != nil {
-				_, vehicle := boltdb.GetVehicleByID(string(k), db)
-				if searchType == 0 {
-					if vehicle.Name == search {
-						hasPreviousPage = true
-					}
-				} else {
-					if *(vehicle.Model) == search {
-						hasPreviousPage = true
-					}
-				}
-				if strconv.Itoa(from) == string(k) {
-					k, _ = c.Next()
-					break
-				}
-				k, _ = c.Next()
-			}
+	for len(edges) < *first {
+		vehicle := db.MySQLGetVehicleBy_id(strconv.Itoa(from))
+		if vehicle.ID == "" {
+			break
 		}
-
-		// 添加edge
-		for k != nil {
-			_, vehicle := boltdb.GetVehicleByID(string(k), db)
-			if searchType == 0 {
-				if vehicle.Name == search {
-					edges = append(edges, model.VehicleEdge{
-						Node:   vehicle,
-						Cursor: encodeCursor(string(k)),
-					})
-					count++
-				}
-			} else {
-				if *(vehicle.Model) == search {
-					edges = append(edges, model.VehicleEdge{
-						Node:   vehicle,
-						Cursor: encodeCursor(string(k)),
-					})
-					count++
-				}
-			}
-			k, _ = c.Next()
-			if first != nil && count == *first {
-				break
-			}
+		if vehicle.Name == search {
+			edges = append(edges, model.VehicleEdge{
+				Node:   vehicle,
+				Cursor: encodeCursor(strconv.Itoa(from)),
+			})
 		}
-
-		// 判断是否还有后向页
-		for k != nil {
-			_, vehicle := boltdb.GetVehicleByID(string(k), db)
-			if searchType == 0 {
-				if vehicle.Name == search {
-					hasNextPage = true
-					break
-				}
-			} else {
-				if *(vehicle.Model) == search {
-					hasNextPage = true
-					break
-				}
-			}
-			k, _ = c.Next()
-		}
-		return nil
-	})
-	if count == 0 {
-		return &model.VehicleConnection{}, nil
+		from++
 	}
-	// 获取pageInfo
+
+	// 查询from之后是否存在满足search条件的条目
+	for {
+		vehicle := db.MySQLGetVehicleBy_id(strconv.Itoa(from))
+		if vehicle.ID == "" {
+			break
+		}
+		if vehicle.Name == search {
+			hasNextPage = true
+			break
+		}
+		from++
+	}
+	if len(edges) == 0 {
+		return &model.VehicleConnection{
+			PageInfo: model.PageInfo{
+				HasPreviousPage: hasPreviousPage,
+				HasNextPage:     hasNextPage,
+			},
+		}, nil
+	}
 	pageInfo := model.PageInfo{
-		StartCursor:     encodeCursor(edges[0].Node.ID),
-		EndCursor:       encodeCursor(edges[count-1].Node.ID),
+		StartCursor:     edges[0].Cursor,
+		EndCursor:       edges[len(edges)-1].Cursor,
 		HasPreviousPage: hasPreviousPage,
 		HasNextPage:     hasNextPage,
 	}

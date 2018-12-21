@@ -7,18 +7,16 @@ import (
 	"strconv"
 	"strings"
 
-	boltdb "github.com/Go-GraphQL-Group/GraphQL-Service/db"
+	"github.com/Go-GraphQL-Group/GraphQL-Service/db"
 	"github.com/Go-GraphQL-Group/GraphQL-Service/model"
-	"github.com/boltdb/bolt"
 )
 
 func (r *queryResolver) Film(ctx context.Context, id string) (*model.Film, error) {
-	err, film := boltdb.GetFilmByID(id, nil)
-	checkErr(err)
-	return film, err
+	film := db.MySQLGetFilmByID(id)
+	return film, nil
 }
 func (r *queryResolver) Films(ctx context.Context, first *int, after *string) (model.FilmConnection, error) {
-	from := -1
+	from := 1
 	if after != nil {
 		b, err := base64.StdEncoding.DecodeString(*after)
 		if err != nil {
@@ -28,80 +26,49 @@ func (r *queryResolver) Films(ctx context.Context, first *int, after *string) (m
 		if err != nil {
 			return model.FilmConnection{}, err
 		}
-		from = i
+		from = i + 1
 	}
-	count := 0
-	startID := ""
+
 	hasPreviousPage := true
 	hasNextPage := true
+
+	if from == 1 {
+		hasPreviousPage = false
+	}
 	// 获取edges
 	edges := []model.FilmEdge{}
-	db, err := bolt.Open("data/data.db", 0600, nil)
-	checkErr(err)
-	defer db.Close()
-	db.View(func(tx *bolt.Tx) error {
-		c := tx.Bucket([]byte(filmsBucket)).Cursor()
 
-		// 判断是否还有前向页
-		k, v := c.First()
-		if from == -1 || strconv.Itoa(from) == string(k) {
-			startID = string(k)
-			hasPreviousPage = false
+	for len(edges) < *first {
+		film := db.MySQLGetFilmBy_id(strconv.Itoa(from))
+		if film.ID == "" {
+			break
 		}
+		edges = append(edges, model.FilmEdge{
+			Node:   film,
+			Cursor: encodeCursor(strconv.Itoa(from)),
+		})
+		from++
+	}
 
-		if from == -1 {
-			for k, _ := c.First(); k != nil; k, _ = c.Next() {
-				_, film := boltdb.GetFilmByID(string(k), db)
-				edges = append(edges, model.FilmEdge{
-					Node:   film,
-					Cursor: encodeCursor(string(k)),
-				})
-				count++
-				if count == *first {
-					break
-				}
-			}
-		} else {
-			for k, _ := c.First(); k != nil; k, _ = c.Next() {
-				if strconv.Itoa(from) == string(k) {
-					k, _ = c.Next()
-					startID = string(k)
-				}
-				if startID != "" {
-					_, film := boltdb.GetFilmByID(string(k), db)
-					edges = append(edges, model.FilmEdge{
-						Node:   film,
-						Cursor: encodeCursor(string(k)),
-					})
-					count++
-					if count == *first {
-						break
-					}
-				}
-			}
-		}
+	if len(edges) < *first {
+		hasNextPage = false
+	}
 
-		k, v = c.Next()
-		if k == nil && v == nil {
-			hasNextPage = false
-		}
-		return nil
-	})
-	if count == 0 {
+	if len(edges) == 0 {
 		return model.FilmConnection{}, nil
 	}
 	// 获取pageInfo
 	pageInfo := model.PageInfo{
 		HasPreviousPage: hasPreviousPage,
 		HasNextPage:     hasNextPage,
-		StartCursor:     encodeCursor(startID),
-		EndCursor:       encodeCursor(edges[count-1].Node.ID),
+		StartCursor:     encodeCursor(strconv.Itoa(from - len(edges))),
+		EndCursor:       encodeCursor(strconv.Itoa(from - 1)),
 	}
 
 	return model.FilmConnection{
 		PageInfo:   pageInfo,
 		Edges:      edges,
-		TotalCount: count,
+		TotalCount: len(edges),
 	}, nil
 }
 func (r *queryResolver) FilmsSearch(ctx context.Context, search string, first *int, after *string) (*model.FilmConnection, error) {
@@ -110,7 +77,7 @@ func (r *queryResolver) FilmsSearch(ctx context.Context, search string, first *i
 	} else {
 		return &model.FilmConnection{}, errors.New("Search content must be ' Title:<Film's Title you want to get> ' ")
 	}
-	from := -1
+	from := 1
 	if after != nil {
 		b, err := base64.StdEncoding.DecodeString(*after)
 		if err != nil {
@@ -120,68 +87,61 @@ func (r *queryResolver) FilmsSearch(ctx context.Context, search string, first *i
 		if err != nil {
 			return &model.FilmConnection{}, err
 		}
-		from = i
+		from = i + 1
 	}
 	count := 0
 	hasPreviousPage := false
 	hasNextPage := false
+	// 查询from之前是否存在满足search条件的条目
+	for i := 1; i < from; i++ {
+		film := db.MySQLGetFilmBy_id(strconv.Itoa(i))
+		if film.ID == "" {
+			break
+		}
+		if film.Title == search {
+			hasPreviousPage = true
+			break
+		}
+	}
 	// 获取edges
 	edges := []model.FilmEdge{}
-	db, err := bolt.Open("data/data.db", 0600, nil)
-	checkErr(err)
-	defer db.Close()
-	db.View(func(tx *bolt.Tx) error {
-		c := tx.Bucket([]byte(filmsBucket)).Cursor()
-		k, _ := c.First()
-		// 判断是否还有前向页
-		if from != -1 {
-			for k != nil {
-				_, film := boltdb.GetFilmByID(string(k), db)
-				if film.Title == search {
-					hasPreviousPage = true
-				}
-				if strconv.Itoa(from) == string(k) {
-					k, _ = c.Next()
-					break
-				}
-				k, _ = c.Next()
-			}
+	for len(edges) < *first {
+		film := db.MySQLGetFilmBy_id(strconv.Itoa(from))
+		if film.ID == "" {
+			break
 		}
-
-		// 添加edge
-		for k != nil {
-			_, film := boltdb.GetFilmByID(string(k), db)
-			if film.Title == search {
-				edges = append(edges, model.FilmEdge{
-					Node:   film,
-					Cursor: encodeCursor(string(k)),
-				})
-				count++
-			}
-			k, _ = c.Next()
-			if first != nil && count == *first {
-				break
-			}
+		if film.Title == search {
+			edges = append(edges, model.FilmEdge{
+				Node:   film,
+				Cursor: encodeCursor(strconv.Itoa(from)),
+			})
 		}
-
-		// 判断是否还有后向页
-		for k != nil {
-			_, film := boltdb.GetFilmByID(string(k), db)
-			if film.Title == search {
-				hasNextPage = true
-				break
-			}
-			k, _ = c.Next()
+		from++
+	}
+	// 查询from之后是否存在满足search条件的条目
+	for {
+		film := db.MySQLGetFilmBy_id(strconv.Itoa(from))
+		if film.ID == "" {
+			break
 		}
-		return nil
-	})
-	if count == 0 {
-		return &model.FilmConnection{}, nil
+		if film.Title == search {
+			hasNextPage = true
+			break
+		}
+		from++
+	}
+	if len(edges) == 0 {
+		return &model.FilmConnection{
+			PageInfo: model.PageInfo{
+				HasPreviousPage: hasPreviousPage,
+				HasNextPage:     hasNextPage,
+			},
+		}, nil
 	}
 	// 获取pageInfo
 	pageInfo := model.PageInfo{
-		StartCursor:     encodeCursor(edges[0].Node.ID),
-		EndCursor:       encodeCursor(edges[count-1].Node.ID),
+		StartCursor:     edges[0].Cursor,
+		EndCursor:       edges[len(edges)-1].Cursor,
 		HasPreviousPage: hasPreviousPage,
 		HasNextPage:     hasNextPage,
 	}

@@ -128,6 +128,7 @@ func (r *queryResolver) PeopleSearch(ctx context.Context, search string, first *
 			hasNextPage = true
 			break
 		}
+		from++
 	}
 	if len(edges) == 0 {
 		return &model.PeopleConnection{
