@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"io/ioutil"
 
 	model2 "github.com/Go-GraphQL-Group/GraphQL-Service/model"
@@ -25,7 +24,7 @@ func init() {
 	conf := &config{}
 	confFile, err := ioutil.ReadFile("db/conf.yml")
 	CheckErr(err)
-	fmt.Println(string(confFile))
+	// fmt.Println(string(confFile))
 	err = yaml.Unmarshal(confFile, conf)
 	CheckErr(err)
 	dataSourceName := conf.Username + ":" + conf.Password + "@tcp(" + conf.Host + ":" + conf.Port + ")/" + conf.Schema + "?charset=utf8"
