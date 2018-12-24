@@ -3,12 +3,17 @@ package test
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"testing"
 
 	boltdb "github.com/Go-GraphQL-Group/GraphQL-Service/db"
 	"github.com/Go-GraphQL-Group/GraphQL-Service/model"
 	"github.com/boltdb/bolt"
 )
+
+func init() {
+	os.Chdir("..")
+}
 
 func TestGetFilmByID(t *testing.T) {
 	film2 := &model.Film{}
