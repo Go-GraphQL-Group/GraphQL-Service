@@ -27,9 +27,9 @@ func NewServer() *negroni.Negroni {
 
 func initRoutes(router *mux.Router) {
 	router.HandleFunc("/api/login", service.LoginHandler).Methods("POST")
-	// router.Use(service.TokenMiddleware)
-	// router.HandleFunc("/api", service.ApiHandler).Methods("GET")
-	router.HandleFunc("/", handler.Playground("GraphQL playground", "/api/query"))
+	router.Use(service.TokenMiddleware)
+	router.HandleFunc("/api", service.ApiHandler).Methods("GET")
+	// router.HandleFunc("/", handler.Playground("GraphQL playground", "/api/query"))
 	router.HandleFunc("/api/query", handler.GraphQL(graphql.NewExecutableSchema(graphql.Config{Resolvers: &resolver.Resolver{}})))
 	router.HandleFunc("/api/logout", service.LogoutHandler).Methods("POST", "GET")
 }

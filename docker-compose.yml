@@ -23,9 +23,20 @@ services:
     container_name: starwars_server
     restart: always
     ports: 
-      - "127.0.0.1:9090:9090"
+      - "9090:9090"
     external_links:
       - starwars_db:starwars_db
+  client:
+    depends_on:
+      - database
+      - server
+    image: liuyh73/starwars_client:latest
+    container_name: starwars_client
+    restart: always
+    ports:
+      - "80:80"
+    external_links:
+      - starwars_server:starwars_server
 # secrets:
 #   db_user_password:
 #     file: conf/db_user_password.txt
